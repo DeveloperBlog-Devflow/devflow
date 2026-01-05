@@ -1,1 +1,14 @@
 @import 'tailwindcss';
+
+@theme {
+  --color-background: #eceef5;
+  --color-primary: #7a57ff;
+  --color-surface: #ffff;
+
+  --color-banana: oklch(0.95 0.05 100);
+  --color-gray: rgba(0, 0, 0, 0.49);
+  --color-border: #d1d5db; /* 기본 회색 (gray-300 느낌) */
+  --color-border-hover: #9ca3af; /* hover (gray-400) */
+  --color-border-focus: #7a57ff; /* focus = primary */
+  --color-border-error: #ef4444; /* error */
+}
