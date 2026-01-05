@@ -1,7 +1,7 @@
 import { Header } from '@/components/landing/LandingHeader';
-import { Hero } from '@/components/landing/HeroSection';
-import { Feature } from '@/components/landing/FeatureSection';
-import { Demo } from '@/components/landing/DemoPreview';
+import { Hero } from '@/components/landing/LandingHeroSection';
+import { Feature } from '@/components/landing/LandingFeature';
+import { Demo } from '@/components/landing/LandingPreview';
 export default function Home() {
   return (
     <div className="bg-background h-full space-y-60">

@@ -1,5 +1,5 @@
 import Image from 'next/image';
-import { Contents } from '@/components/landing/PreviewContent';
+import { Contents } from '@/components/landing/LandingContent';
 export function Demo() {
   return (
     <div className="mt-30 pb-50 flex h-full flex-col items-center justify-center space-y-3 text-center">

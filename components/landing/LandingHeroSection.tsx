@@ -1,7 +1,7 @@
 export function Hero() {
   return (
-    <div className="flex flex-col items-center justify-center space-y-3 text-center">
-      <p className="bg-surface-alt rounded-mg text-xs mt-16 p-1 px-4 rounded-lg">
+    <div className="pt-30 flex flex-col items-center justify-center space-y-3 text-center">
+      <p className="bg-surface-alt rounded-mg mt-16 rounded-lg p-1 px-4 text-xs">
         🚀 개발자를 위한 성장 플랫폼
       </p>
       <h1 className="text-8xl font-bold">매일 성장하는</h1>
