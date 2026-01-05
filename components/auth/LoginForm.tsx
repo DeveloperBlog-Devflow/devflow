@@ -1,5 +1,6 @@
 import { FormField } from '@/components/auth/FormField';
 import { FaGithub } from 'react-icons/fa';
+import { Button } from '@/components/auth/Button';
 
 export function LoginForm() {
   return (
@@ -12,9 +13,7 @@ export function LoginForm() {
       <p className="text-primary mt-2 ml-1 cursor-pointer text-right text-xs font-medium">
         비밀번호를 잊으셨나요?
       </p>
-      <button className="bg-primary hover:bg-primary-hover active:bg-primary-active mt-6 h-12 w-full cursor-pointer rounded-lg text-base font-medium text-white transition-all duration-150 active:scale-[0.98]">
-        이메일로 로그인하기
-      </button>
+      <Button className="mt-6"> 이메일로 로그인하기</Button>
 
       <p className="text-text-sub mt-4 text-center text-sm">
         계정이 없으신가요?
@@ -26,10 +25,10 @@ export function LoginForm() {
         <div className="bg-border h-px flex-1" />
       </div>
 
-      <button className="flex h-12 w-full items-center justify-center gap-3 rounded-lg bg-black text-white transition-colors duration-150 hover:bg-neutral-900 active:scale-[0.98] active:bg-neutral-800">
+      <Button variant="github">
         <FaGithub className="text-xl" />
-        <span className="text-base font-medium">Github로 로그인</span>
-      </button>
+        <span>Github로 로그인</span>
+      </Button>
     </>
   );
 }
