@@ -3,7 +3,11 @@ import { FaGithub } from 'react-icons/fa';
 import { Button } from '@/components/auth/Button';
 import Link from 'next/link';
 
-export function LoginForm() {
+type LoginFormProps = {
+  handleOpenModal: () => void;
+};
+
+export function LoginForm({ handleOpenModal }: LoginFormProps) {
   return (
     <>
       <div className="space-y-6">
@@ -11,7 +15,10 @@ export function LoginForm() {
         <FormField id="password" label="비밀번호" type="password" />
       </div>
 
-      <p className="text-primary mt-2 ml-1 cursor-pointer text-right text-xs font-medium">
+      <p
+        className="text-primary mt-2 ml-1 cursor-pointer text-right text-xs font-medium"
+        onClick={handleOpenModal}
+      >
         비밀번호를 잊으셨나요?
       </p>
       <Button className="mt-6"> 이메일로 로그인하기</Button>
