@@ -1,17 +1,19 @@
+import Link from 'next/link';
+
 export function Header() {
   return (
-    <div className="flex items-center justify-between bg-white">
-      <h1 className="flex items-center gap-2 px-5 py-2 text-3xl font-bold">
+    <div className="fixed flex w-full items-center justify-between bg-white">
+      <h1 className="flex items-center gap-2 px-10 py-2 text-3xl font-bold">
         <span className="text-primary">&lt;/&gt;</span>
         <span>DevFlow</span>
       </h1>
-      <div className="space-x-1 mr-1">
-        <button className="border-border rounded-lg border p-1 px-4">
-          로그인
-        </button>
-        <button className="bg-primary cursor-pointer rounded-lg p-1 px-2 text-white">
+      <div className="my-3 mr-1 space-x-3 pr-10">
+        <Link
+          className="border-border bg-primary rounded-lg border p-2 px-4 text-white"
+          href="/login"
+        >
           시작하기
-        </button>
+        </Link>
       </div>
     </div>
   );
