@@ -15,12 +15,13 @@ export function LoginForm({ handleOpenModal }: LoginFormProps) {
         <FormField id="password" label="비밀번호" type="password" />
       </div>
 
-      <p
-        className="text-primary mt-2 ml-1 cursor-pointer text-right text-xs font-medium"
+      <button
+        type="button"
+        className="text-primary mt-2 ml-auto block cursor-pointer text-xs font-medium"
         onClick={handleOpenModal}
       >
         비밀번호를 잊으셨나요?
-      </p>
+      </button>
       <Button className="mt-6"> 이메일로 로그인하기</Button>
 
       <p className="text-text-sub mt-4 text-center text-sm">

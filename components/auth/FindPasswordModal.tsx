@@ -1,7 +1,8 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Button } from './Button';
+import { FormField } from './FormField';
 
 type FindPasswordModalProps = {
   onClose: () => void;
@@ -10,12 +11,16 @@ type FindPasswordModalProps = {
 export function FindPasswordModal({ onClose }: FindPasswordModalProps) {
   // 이메일 state
   const [email, setEmail] = useState('');
+  const emailInputRef = useRef<HTMLInputElement>(null);
+
+  // 모달이 열릴 때 이메일 input에 포커스
+  useEffect(() => {
+    emailInputRef.current?.focus();
+  }, []);
 
   // 재전송 버튼 클릭 시 이벤트 메서드
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-
-    console.log(email);
 
     if (!email) {
       alert('이메일을 입력해주세요.');
@@ -25,9 +30,27 @@ export function FindPasswordModal({ onClose }: FindPasswordModalProps) {
     // 이메일 요청 로직
   };
 
+  // esc로 모달을 닫을 수 있는 기능
+  useEffect(() => {
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        onClose();
+      }
+    };
+
+    document.addEventListener('keydown', handleEscape);
+    return () => document.removeEventListener('keydown', handleEscape);
+  }, [onClose]);
+
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30 transition-opacity">
-      <div className="bg-surface relative w-full max-w-lg rounded-2xl p-8 shadow-xl">
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/30 transition-opacity"
+      onClick={onClose}
+    >
+      <div
+        className="bg-surface relative w-full max-w-lg rounded-2xl p-8 shadow-xl"
+        onClick={(e) => e.stopPropagation()}
+      >
         {/* 닫기 버튼 */}
         <button
           onClick={onClose}
@@ -46,20 +69,15 @@ export function FindPasswordModal({ onClose }: FindPasswordModalProps) {
         </div>
 
         {/* 입력창 */}
-        <form className="space-y-1.5" onSubmit={handleSubmit}>
-          <label
-            htmlFor="sending-email"
-            className="text-text text-sm font-medium"
-          >
-            이메일
-          </label>
-          <input
+        <form className="space-y-" onSubmit={handleSubmit}>
+          <FormField
             id="sending-email"
             type="email"
+            label="이메일"
             placeholder="email@example.com"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className="border-border focus:border-primary focus:ring-primary/30 w-full rounded-lg border px-4 py-2.5 text-sm transition-colors focus:ring-2 focus:outline-none"
+            ref={emailInputRef}
           />
 
           {/* 보내기 버튼 */}
