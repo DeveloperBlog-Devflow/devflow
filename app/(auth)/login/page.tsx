@@ -6,6 +6,7 @@ export default function Page() {
       <AuthCard title="로그인" description="로그인해서 학습을 이어가세요">
         <LoginForm />
       </AuthCard>
+      
     </div>
   );
 }
