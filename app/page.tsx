@@ -1,14 +1,14 @@
-import { Header } from '@/components/landing/LandingHeader';
-import { Hero } from '@/components/landing/LandingHeroSection';
-import { Feature } from '@/components/landing/LandingFeature';
-import { Demo } from '@/components/landing/LandingPreview';
+import { LandingHeader } from '@/components/landing/LandingHeader';
+import { HeroSection } from '@/components/landing/HeroSection';
+import { FeatureList } from '@/components/landing/FeatureList';
+import { LandingPreview } from '@/components/landing/LandingPreview';
 export default function Home() {
   return (
     <div className="bg-background h-full space-y-60">
-      <Header />
-      <Hero />
-      <Feature />
-      <Demo />
+      <LandingHeader />
+      <HeroSection />
+      <FeatureList />
+      <LandingPreview />
     </div>
   );
 }

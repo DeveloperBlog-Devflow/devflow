@@ -1,6 +1,6 @@
-export function Hero() {
+export function HeroSection() {
   return (
-    <div className="pt-30 flex flex-col items-center justify-center space-y-3 text-center">
+    <div className="flex flex-col items-center justify-center space-y-3 pt-30 text-center">
       <p className="bg-surface-alt rounded-mg mt-16 rounded-lg p-1 px-4 text-xs">
         🚀 개발자를 위한 성장 플랫폼
       </p>
