@@ -69,7 +69,7 @@ export function FindPasswordModal({ onClose }: FindPasswordModalProps) {
         </div>
 
         {/* 입력창 */}
-        <form className="space-y-" onSubmit={handleSubmit}>
+        <form className="space-y" onSubmit={handleSubmit}>
           <FormField
             id="sending-email"
             type="email"
