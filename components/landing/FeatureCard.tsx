@@ -6,7 +6,7 @@ type FeatureCardProps = {
 };
 export function FeatureCard({ title, description, icon }: FeatureCardProps) {
   return (
-    <div className="rounded-xl bg-white p-6 pb-2  shadow-sm">
+    <div className="rounded-xl bg-white p-6 pb-2 shadow-sm">
       <div className="mb-2">
         <div className="bg-primary/10 text-primary flex h-10 w-10 items-center justify-center rounded-lg">
           {icon}

@@ -19,16 +19,18 @@ const ITEMS = [
   },
 ];
 
-export function Contents() {
+export function FeatureContent() {
   return (
     <ul className="space-y-6">
       {ITEMS.map((item) => (
         <li key={item.title}>
           <div className="flex gap-3">
-            <FiCheckCircle className="text-primary text-2xl "  />
-            <p className="font-medium text-xl">{item.title}</p>
+            <FiCheckCircle className="text-primary text-2xl" />
+            <p className="text-xl font-medium">{item.title}</p>
           </div>
-          <p className="text-text-sub mt-1 text-l text-left pl-10">{item.description}</p>
+          <p className="text-text-sub text-l mt-1 pl-10 text-left">
+            {item.description}
+          </p>
         </li>
       ))}
     </ul>

@@ -31,9 +31,9 @@ const FEATURES = [
       'GitHub 스타일 잔디 그래프로 학습 활동을 한눈에 확인하고 동기부여를 받아보세요.',
   },
 ];
-export function Feature() {
+export function FeatureList() {
   return (
-    <div className="h-full flex flex-col items-center justify-center space-y-3 text-center">
+    <div className="flex h-full flex-col items-center justify-center space-y-3 text-center">
       <p className="bg-surface-alt rounded-mg mt-16 rounded-lg p-1 px-4 text-xs">
         ⚙️ 핵심 기능
       </p>
@@ -42,7 +42,7 @@ export function Feature() {
       <div className="text-xl font-light">
         <h2>체계적인 학습과 지속적인 성장을 돕는 강력한 기능들</h2>
       </div>
-      <div className="mt-15 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4 px-20">
+      <div className="mt-15 grid grid-cols-1 gap-6 px-20 sm:grid-cols-2 lg:grid-cols-4">
         {FEATURES.map((feature) => (
           <FeatureCard key={feature.title} {...feature} />
         ))}
