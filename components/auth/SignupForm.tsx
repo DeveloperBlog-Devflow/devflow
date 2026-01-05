@@ -1,4 +1,5 @@
 import { FormField } from '@/components/auth/FormField';
+import Link from 'next/link';
 
 export function SignupForm() {
   return (
@@ -16,7 +17,12 @@ export function SignupForm() {
 
       <p className="text-text-sub mt-4 text-center text-sm">
         계정이 있으신가요?
-        <a className="text-primary ml-1 cursor-pointer font-medium">로그인</a>
+        <Link
+          className="text-primary ml-1 cursor-pointer font-medium"
+          href="/login"
+        >
+          로그인
+        </Link>
       </p>
     </>
   );

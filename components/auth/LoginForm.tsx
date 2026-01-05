@@ -1,6 +1,7 @@
 import { FormField } from '@/components/auth/FormField';
 import { FaGithub } from 'react-icons/fa';
 import { Button } from '@/components/auth/Button';
+import Link from 'next/link';
 
 export function LoginForm() {
   return (
@@ -17,7 +18,12 @@ export function LoginForm() {
 
       <p className="text-text-sub mt-4 text-center text-sm">
         계정이 없으신가요?
-        <a className="text-primary ml-1 cursor-pointer font-medium">회원가입</a>
+        <Link
+          className="text-primary ml-1 cursor-pointer font-medium"
+          href="/signup"
+        >
+          회원가입
+        </Link>
       </p>
       <div className="text-muted my-6 flex items-center gap-4 text-sm">
         <div className="bg-border h-px flex-1" />
