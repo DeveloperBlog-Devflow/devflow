@@ -29,9 +29,9 @@ const LoginForm = ({ handleOpenModal }: LoginFormProps) => {
       const user = result.user;
       console.log('로그인 성공 : ', user);
       router.push('/main');
-    } catch (error: unknown) {
-      if (error instanceof Error) {
-        console.log('로그인 에러 : ', error.message);
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        console.log('로그인 에러 : ', err.message);
       }
     }
   };
