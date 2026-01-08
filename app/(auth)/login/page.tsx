@@ -1,11 +1,11 @@
 'use client';
 
-import { AuthCard } from '@/components/auth/AuthCard';
-import { FindPasswordModal } from '@/components/auth/FindPasswordModal';
-import { LoginForm } from '@/components/auth/LoginForm';
+import AuthCard from '@/components/auth/AuthCard';
+import FindPasswordModal from '@/components/auth/FindPasswordModal';
+import LoginForm from '@/components/auth/LoginForm';
 import { useState } from 'react';
 
-export default function Page() {
+const Page = () => {
   // 비밀번호 재설정 모달 state
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -25,4 +25,6 @@ export default function Page() {
       {isModalOpen && <FindPasswordModal onClose={handleCloseModal} />}
     </div>
   );
-}
+};
+
+export default Page;

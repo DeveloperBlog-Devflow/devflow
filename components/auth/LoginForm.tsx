@@ -1,13 +1,41 @@
-import { FormField } from '@/components/auth/FormField';
+'use client';
+
+import FormField from '@/components/auth/FormField';
 import { FaGithub } from 'react-icons/fa';
-import { Button } from '@/components/auth/Button';
+import Button from '@/components/auth/Button';
 import Link from 'next/link';
+import { auth } from '@/lib/firebase';
+import {
+  GithubAuthProvider,
+  signInWithPopup,
+  UserCredential,
+} from 'firebase/auth';
+import { useRouter } from 'next/navigation';
 
 type LoginFormProps = {
   handleOpenModal: () => void;
 };
 
-export function LoginForm({ handleOpenModal }: LoginFormProps) {
+const LoginForm = ({ handleOpenModal }: LoginFormProps) => {
+  const router = useRouter();
+
+  const githubProvider = new GithubAuthProvider();
+  const handleGithubLogin = async () => {
+    try {
+      const result: UserCredential = await signInWithPopup(
+        auth,
+        githubProvider
+      );
+      const user = result.user;
+      console.log('로그인 성공 : ', user);
+      router.push('/main');
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        console.log('로그인 에러 : ', error.message);
+      }
+    }
+  };
+
   return (
     <>
       <div className="space-y-6">
@@ -41,8 +69,10 @@ export function LoginForm({ handleOpenModal }: LoginFormProps) {
 
       <Button variant="github">
         <FaGithub className="text-xl" />
-        <span>Github로 로그인</span>
+        <span onClick={handleGithubLogin}>Github로 로그인</span>
       </Button>
     </>
   );
-}
+};
+
+export default LoginForm;
