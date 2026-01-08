@@ -35,11 +35,11 @@ const LoginForm = ({ handleOpenModal }: LoginFormProps) => {
         githubProvider
       );
       const user = result.user;
-      console.log('로그인 성공 : ', user);
+      // console.log('로그인 성공 : ', user);
       router.push('/main');
     } catch (err: unknown) {
       if (err instanceof Error) {
-        console.log('로그인 에러 : ', err.message);
+        // console.log('로그인 에러 : ', err.message);
       }
     }
   };
@@ -65,10 +65,10 @@ const LoginForm = ({ handleOpenModal }: LoginFormProps) => {
         email,
         password
       );
-      console.log('로그인 성공!', userCredential.user);
+      // console.log('로그인 성공!', userCredential.user);
       router.push('/main');
     } catch (err) {
-      console.error('로그인 에러:', err);
+      // console.error('로그인 에러:', err);
       setError('이메일 또는 비밀번호가 잘못되었습니다.');
       setIsLoading(false);
     }
