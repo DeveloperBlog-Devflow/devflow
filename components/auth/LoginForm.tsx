@@ -7,16 +7,23 @@ import Link from 'next/link';
 import { auth } from '@/lib/firebase';
 import {
   GithubAuthProvider,
+  signInWithEmailAndPassword,
   signInWithPopup,
   UserCredential,
 } from 'firebase/auth';
 import { useRouter } from 'next/navigation';
+import { useState } from 'react';
 
 type LoginFormProps = {
   handleOpenModal: () => void;
+  handleSubmit: () => void;
 };
 
 const LoginForm = ({ handleOpenModal }: LoginFormProps) => {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
+
   const router = useRouter();
 
   const githubProvider = new GithubAuthProvider();
@@ -29,19 +36,59 @@ const LoginForm = ({ handleOpenModal }: LoginFormProps) => {
       const user = result.user;
       console.log('로그인 성공 : ', user);
       router.push('/main');
-    } catch (error: unknown) {
-      if (error instanceof Error) {
-        console.log('로그인 에러 : ', error.message);
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        console.log('로그인 에러 : ', err.message);
       }
     }
   };
 
+  // 이메일 로그인 메서드
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setError('');
+
+    // 유효성 검사
+    if (!email || !password) {
+      setError('이메일과 비밀번호를 모두 입력해주세요.');
+      return;
+    }
+
+    try {
+      const userCredential = await signInWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
+      console.log('로그인 성공!', userCredential.user);
+    } catch (err) {
+      console.error('로그인 에러:', err);
+      setError('이메일 또는 비밀번호가 잘못되었습니다.');
+    }
+  };
+
   return (
-    <>
+    <form onSubmit={handleSubmit}>
       <div className="space-y-6">
-        <FormField id="email" label="이메일" type="email" />
-        <FormField id="password" label="비밀번호" type="password" />
+        <FormField
+          id="email"
+          label="이메일"
+          type="email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          placeholder="email@example.com"
+        />
+        <FormField
+          id="password"
+          label="비밀번호"
+          type="password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          placeholder="비밀번호를 입력하세요"
+        />
       </div>
+
+      {error && <p className="mt-2 text-sm text-red-500">{error}</p>}
 
       <button
         type="button"
@@ -50,7 +97,9 @@ const LoginForm = ({ handleOpenModal }: LoginFormProps) => {
       >
         비밀번호를 잊으셨나요?
       </button>
-      <Button className="mt-6"> 이메일로 로그인하기</Button>
+      <Button className="mt-6" type="submit">
+        이메일로 로그인하기
+      </Button>
 
       <p className="text-text-sub mt-4 text-center text-sm">
         계정이 없으신가요?
@@ -67,11 +116,11 @@ const LoginForm = ({ handleOpenModal }: LoginFormProps) => {
         <div className="bg-border h-px flex-1" />
       </div>
 
-      <Button variant="github">
+      <Button variant="github" onClick={handleGithubLogin}>
         <FaGithub className="text-xl" />
-        <span onClick={handleGithubLogin}>Github로 로그인</span>
+        <span>Github로 로그인</span>
       </Button>
-    </>
+    </form>
   );
 };
 
