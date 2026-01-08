@@ -9,7 +9,7 @@ type FieldProps = {
 const inputClass =
   'border-border placeholder:text-muted hover:border-border-hover focus:border-border-focus focus:ring-border-focus h-10 w-full rounded-md border px-3 text-sm transition-colors focus:ring-1 focus:outline-none';
 
-export const FormField = forwardRef<HTMLInputElement, FieldProps>(
+const FormField = forwardRef<HTMLInputElement, FieldProps>(
   ({ id, label, type = 'text', ...rest }, ref) => {
     return (
       <div className="space-y-1">
@@ -23,3 +23,5 @@ export const FormField = forwardRef<HTMLInputElement, FieldProps>(
 );
 
 FormField.displayName = 'FormField';
+
+export default FormField;

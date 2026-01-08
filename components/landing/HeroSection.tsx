@@ -1,4 +1,4 @@
-export function HeroSection() {
+const HeroSection = () => {
   return (
     <div className="flex flex-col items-center justify-center space-y-3 pt-30 text-center">
       <p className="bg-surface-alt rounded-mg mt-16 rounded-lg p-1 px-4 text-xs">
@@ -12,4 +12,6 @@ export function HeroSection() {
       </div>
     </div>
   );
-}
+};
+
+export default HeroSection;

@@ -1,6 +1,7 @@
-import { AuthCard } from '@/components/auth/AuthCard';
-import { SignupForm } from '@/components/auth/SignupForm';
-export default function Page() {
+import AuthCard from '@/components/auth/AuthCard';
+import SignupForm from '@/components/auth/SignupForm';
+
+const Page = () => {
   return (
     <div className="bg-background">
       <AuthCard title="회원가입" description="회원가입하여 계정을 생성하세요">
@@ -8,4 +9,6 @@ export default function Page() {
       </AuthCard>
     </div>
   );
-}
+};
+
+export default Page;

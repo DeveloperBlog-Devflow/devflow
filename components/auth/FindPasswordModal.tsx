@@ -1,14 +1,14 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import { Button } from './Button';
-import { FormField } from './FormField';
+import Button from './Button';
+import FormField from './FormField';
 
 type FindPasswordModalProps = {
   onClose: () => void;
 };
 
-export function FindPasswordModal({ onClose }: FindPasswordModalProps) {
+const FindPasswordModal = ({ onClose }: FindPasswordModalProps) => {
   // 이메일 state
   const [email, setEmail] = useState('');
   const emailInputRef = useRef<HTMLInputElement>(null);
@@ -88,4 +88,6 @@ export function FindPasswordModal({ onClose }: FindPasswordModalProps) {
       </div>
     </div>
   );
-}
+};
+
+export default FindPasswordModal;

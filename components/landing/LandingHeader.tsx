@@ -1,6 +1,6 @@
 import Link from 'next/link';
 
-export function LandingHeader() {
+const LandingHeader = () => {
   return (
     <div className="fixed flex w-full items-center justify-between bg-white">
       <h1 className="flex items-center gap-2 px-10 py-2 text-3xl font-bold">
@@ -17,4 +17,6 @@ export function LandingHeader() {
       </div>
     </div>
   );
-}
+};
+
+export default LandingHeader;

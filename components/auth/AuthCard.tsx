@@ -6,7 +6,7 @@ type Props = {
   children: React.ReactNode;
 };
 
-export function AuthCard({ title, description, children }: Props) {
+const AuthCard = ({ title, description, children }: Props) => {
   return (
     <div className="flex h-screen w-screen -translate-y-6 flex-col items-center justify-center">
       <Link
@@ -24,4 +24,6 @@ export function AuthCard({ title, description, children }: Props) {
       </div>
     </div>
   );
-}
+};
+
+export default AuthCard;
