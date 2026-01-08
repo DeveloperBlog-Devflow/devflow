@@ -16,7 +16,6 @@ import { useState } from 'react';
 
 type LoginFormProps = {
   handleOpenModal: () => void;
-  handleSubmit: () => void;
 };
 
 const LoginForm = ({ handleOpenModal }: LoginFormProps) => {
@@ -27,6 +26,7 @@ const LoginForm = ({ handleOpenModal }: LoginFormProps) => {
   const router = useRouter();
 
   const githubProvider = new GithubAuthProvider();
+
   const handleGithubLogin = async () => {
     try {
       const result: UserCredential = await signInWithPopup(
@@ -61,6 +61,7 @@ const LoginForm = ({ handleOpenModal }: LoginFormProps) => {
         password
       );
       console.log('로그인 성공!', userCredential.user);
+      router.push('/main');
     } catch (err) {
       console.error('로그인 에러:', err);
       setError('이메일 또는 비밀번호가 잘못되었습니다.');
@@ -116,7 +117,7 @@ const LoginForm = ({ handleOpenModal }: LoginFormProps) => {
         <div className="bg-border h-px flex-1" />
       </div>
 
-      <Button variant="github" onClick={handleGithubLogin}>
+      <Button variant="github" onClick={handleGithubLogin} type="button">
         <FaGithub className="text-xl" />
         <span>Github로 로그인</span>
       </Button>
