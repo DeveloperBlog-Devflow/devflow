@@ -22,6 +22,7 @@ const LoginForm = ({ handleOpenModal }: LoginFormProps) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
 
   const router = useRouter();
 
@@ -48,9 +49,13 @@ const LoginForm = ({ handleOpenModal }: LoginFormProps) => {
     e.preventDefault();
     setError('');
 
+    if (isLoading) return;
+    setIsLoading(true);
+
     // 유효성 검사
     if (!email || !password) {
       setError('이메일과 비밀번호를 모두 입력해주세요.');
+      setIsLoading(false);
       return;
     }
 
@@ -65,6 +70,7 @@ const LoginForm = ({ handleOpenModal }: LoginFormProps) => {
     } catch (err) {
       console.error('로그인 에러:', err);
       setError('이메일 또는 비밀번호가 잘못되었습니다.');
+      setIsLoading(false);
     }
   };
 
@@ -99,7 +105,7 @@ const LoginForm = ({ handleOpenModal }: LoginFormProps) => {
         비밀번호를 잊으셨나요?
       </button>
       <Button className="mt-6" type="submit">
-        이메일로 로그인하기
+        {isLoading ? '로그인 중...' : '이메일로 로그인하기'}
       </Button>
 
       <p className="text-text-sub mt-4 text-center text-sm">
@@ -117,7 +123,12 @@ const LoginForm = ({ handleOpenModal }: LoginFormProps) => {
         <div className="bg-border h-px flex-1" />
       </div>
 
-      <Button variant="github" onClick={handleGithubLogin} type="button">
+      <Button
+        variant="github"
+        onClick={handleGithubLogin}
+        type="button"
+        disabled={isLoading}
+      >
         <FaGithub className="text-xl" />
         <span>Github로 로그인</span>
       </Button>
