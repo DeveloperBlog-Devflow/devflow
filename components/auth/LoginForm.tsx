@@ -39,7 +39,6 @@ const LoginForm = ({ handleOpenModal }: LoginFormProps) => {
       router.push('/main');
     } catch (err: unknown) {
       if (err instanceof Error) {
-        // console.log('로그인 에러 : ', err.message);
       }
     }
   };
