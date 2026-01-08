@@ -1,7 +1,7 @@
-import { FormField } from '@/components/auth/FormField';
+import FormField from '@/components/auth/FormField';
 import Link from 'next/link';
 
-export function SignupForm() {
+const SignupForm = () => {
   return (
     <>
       <div className="space-y-6">
@@ -26,4 +26,6 @@ export function SignupForm() {
       </p>
     </>
   );
-}
+};
+
+export default SignupForm;

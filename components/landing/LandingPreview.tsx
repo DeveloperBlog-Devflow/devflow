@@ -1,6 +1,7 @@
 import Image from 'next/image';
-import { FeatureContent } from '@/components/landing/FeatureContent';
-export function LandingPreview() {
+import FeatureContent from '@/components/landing/FeatureContent';
+
+const LandingPreview = () => {
   return (
     <div className="mt-30 flex h-full flex-col items-center justify-center space-y-3 pb-50 text-center">
       <p className="bg-surface-alt rounded-mg mt-16 rounded-lg p-1 px-4 text-xs">
@@ -20,4 +21,6 @@ export function LandingPreview() {
       </div>
     </div>
   );
-}
+};
+
+export default LandingPreview;

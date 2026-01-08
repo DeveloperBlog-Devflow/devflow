@@ -1,4 +1,4 @@
-import { FeatureCard } from '@/components/landing/FeatureCard';
+import FeatureCard from '@/components/landing/FeatureCard';
 import {
   FiBookOpen,
   FiTarget,
@@ -31,7 +31,7 @@ const FEATURES = [
       'GitHub 스타일 잔디 그래프로 학습 활동을 한눈에 확인하고 동기부여를 받아보세요.',
   },
 ];
-export function FeatureList() {
+const FeatureList = () => {
   return (
     <div className="flex h-full flex-col items-center justify-center space-y-3 text-center">
       <p className="bg-surface-alt rounded-mg mt-16 rounded-lg p-1 px-4 text-xs">
@@ -49,4 +49,6 @@ export function FeatureList() {
       </div>
     </div>
   );
-}
+};
+
+export default FeatureList;

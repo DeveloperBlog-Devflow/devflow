@@ -9,13 +9,13 @@ type ButtonProps = {
   onClick?: () => void;
 };
 
-export function Button({
+const Button = ({
   children,
   variant = 'primary',
   className,
   type = 'button',
   onClick,
-}: ButtonProps) {
+}: ButtonProps) => {
   return (
     <button
       type={type}
@@ -35,4 +35,6 @@ export function Button({
       {children}
     </button>
   );
-}
+};
+
+export default Button;

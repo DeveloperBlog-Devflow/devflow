@@ -19,7 +19,7 @@ const ITEMS = [
   },
 ];
 
-export function FeatureContent() {
+const FeatureContent = () => {
   return (
     <ul className="space-y-6">
       {ITEMS.map((item) => (
@@ -35,4 +35,6 @@ export function FeatureContent() {
       ))}
     </ul>
   );
-}
+};
+
+export default FeatureContent;

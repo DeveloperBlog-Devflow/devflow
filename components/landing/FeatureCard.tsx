@@ -4,7 +4,7 @@ type FeatureCardProps = {
   title: string;
   description: string;
 };
-export function FeatureCard({ title, description, icon }: FeatureCardProps) {
+const FeatureCard = ({ title, description, icon }: FeatureCardProps) => {
   return (
     <div className="rounded-xl bg-white p-6 pb-2 shadow-sm">
       <div className="mb-2">
@@ -17,4 +17,6 @@ export function FeatureCard({ title, description, icon }: FeatureCardProps) {
       <p className="text-muted mt-2 text-left text-sm">{description}</p>
     </div>
   );
-}
+};
+
+export default FeatureCard;
