@@ -7,6 +7,7 @@ type ButtonProps = {
   className?: string;
   type?: 'button' | 'submit';
   onClick?: () => void;
+  disabled?: boolean;
 };
 
 const Button = ({
@@ -15,11 +16,13 @@ const Button = ({
   className,
   type = 'button',
   onClick,
+  disabled,
 }: ButtonProps) => {
   return (
     <button
       type={type}
       onClick={onClick}
+      disabled={disabled}
       className={clsx(
         'h-12 w-full cursor-pointer rounded-lg text-base font-medium transition-all duration-150 active:scale-[0.98]',
 
