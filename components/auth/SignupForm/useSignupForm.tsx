@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react';
-import { vEmail, vNickname, vPassword, vPasswordConfirm } from './validators';
+import { vEmail, vNickname, vPassword, vPasswordConfirm } from '../../../utils/validators';
 
 export type SignupValues = {
   nickname: string;
