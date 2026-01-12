@@ -1,9 +1,6 @@
 const HeroSection = () => {
   return (
     <div className="flex flex-col items-center justify-center space-y-3 pt-30 text-center">
-      <p className="bg-surface-alt rounded-mg mt-16 rounded-lg p-1 px-4 text-xs">
-        🚀 개발자를 위한 성장 플랫폼
-      </p>
       <h1 className="text-8xl font-bold">매일 성장하는</h1>
       <h1 className="text-primary text-8xl font-bold">개발자의 여정</h1>
       <div className="text-2xl font-light">

@@ -34,15 +34,12 @@ const FEATURES = [
 const FeatureList = () => {
   return (
     <div className="flex h-full flex-col items-center justify-center space-y-3 text-center">
-      <p className="bg-surface-alt rounded-mg mt-16 rounded-lg p-1 px-4 text-xs">
-        ⚙️ 핵심 기능
-      </p>
       <h1 className="text-4xl font-bold">개발자 성장을 위한</h1>
       <h1 className="text-primary text-4xl font-bold">완벽한 도구</h1>
       <div className="text-xl font-light">
         <h2>체계적인 학습과 지속적인 성장을 돕는 강력한 기능들</h2>
       </div>
-      <div className="mt-15 grid grid-cols-1 gap-6 px-20 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="mt-15 grid max-w-7xl grid-cols-1 gap-6 px-20 sm:grid-cols-2 lg:grid-cols-4">
         {FEATURES.map((feature) => (
           <FeatureCard key={feature.title} {...feature} />
         ))}
