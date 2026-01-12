@@ -20,7 +20,6 @@ const Page = () => {
       <BottomSection className="grid grid-cols-1 gap-6 md:grid-cols-2" />
 
       {/* 3. ButtonSection */}
-      {/* 버튼 두개 만드쇼 */}
       <ButtonSection />
     </div>
   );
