@@ -17,9 +17,9 @@ const ProfileSection = ({ className }: ProfileSectionProps) => {
             <h3 className="text-xl font-bold text-gray-900">이건무</h3>
             <p className="text-sm text-gray-500">@mnmnnmm324</p>
             <div className="mt-1 flex gap-2 text-xs font-medium">
-              <span className="text-purple-600">38193일 연속</span>
+              <span className="text-primary">38193일 </span>연속
               <span className="text-gray-400">|</span>
-              <span className="text-gray-600">12개 TIL</span>
+              <span className="text-primary">12개 </span>TIL
             </div>
           </div>
         </Card>
@@ -27,7 +27,7 @@ const ProfileSection = ({ className }: ProfileSectionProps) => {
 
       <div className="md:col-span-1">
         <Card className="flex h-full flex-col items-center justify-center text-center">
-          <div className="mb-1 text-4xl font-bold text-purple-600">3/5</div>
+          <div className="text-primary mb-1 text-4xl font-bold">3/5</div>
           <div className="text-sm font-medium text-gray-500">
             오늘의 목표 달성률
           </div>

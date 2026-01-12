@@ -1,8 +1,8 @@
 import BottomSection from '@/components/home/BottomSection';
-import Card from '@/components/home/Card';
 import GraphSection from '@/components/home/GraphSection';
 import HeaderSection from '@/components/home/HeaderSection';
 import ProfileSection from '@/components/home/ProfileSection';
+import ButtonSection from '@/components/home/ButtonSection';
 
 const Page = () => {
   return (
@@ -21,6 +21,7 @@ const Page = () => {
 
       {/* 3. ButtonSection */}
       {/* 버튼 두개 만드쇼 */}
+      <ButtonSection />
     </div>
   );
 };
