@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import {
   Home,
   ClipboardList,
@@ -9,6 +9,8 @@ import {
   CopyPlus,
   LogOut,
 } from 'lucide-react';
+import { signOut } from 'firebase/auth';
+import { auth } from '@/lib/firebase';
 
 const navItems = [
   { label: '홈', href: '/', icon: Home },
@@ -19,6 +21,18 @@ const navItems = [
 
 const Sidebar = () => {
   const pathname = usePathname();
+  const router = useRouter();
+
+  const handleLogout = async (): Promise<void> => {
+    try {
+      await signOut(auth);
+      router.replace('/landing');
+      router.refresh(); // 서버 컴포넌트/세션 UI 갱신
+    } catch (err) {
+      console.error('로그아웃 실패:', err);
+      alert('로그아웃에 실패했습니다.');
+    }
+  };
 
   return (
     <div className="fixed flex h-screen w-48 flex-col bg-white">
@@ -57,7 +71,10 @@ const Sidebar = () => {
         </ul>
       </nav>
       <div className="absolute bottom-0 w-full border-t border-slate-200 p-4">
-        <button className="flex items-center gap-3 rounded-lg px-4 py-3 text-sm font-medium text-slate-700 hover:bg-slate-100">
+        <button
+          className="flex items-center gap-3 rounded-lg px-4 py-3 text-sm font-medium text-slate-700 hover:bg-slate-100"
+          onClick={handleLogout}
+        >
           <LogOut className="h-5 w-5 text-slate-600" />
           로그아웃
         </button>
