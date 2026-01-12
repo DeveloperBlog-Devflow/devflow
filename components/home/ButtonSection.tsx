@@ -1,6 +1,6 @@
 const ButtonSection = () => {
   return (
-    <div className="flex w-full max-w-5xl gap-6">
+    <div className="flex w-full gap-6">
       <button
         type="button"
         className="bg-primary flex-1 rounded-xl py-4 text-center text-base font-semibold text-white shadow-sm transition hover:bg-violet-500 active:bg-violet-700 disabled:cursor-not-allowed disabled:opacity-60"
