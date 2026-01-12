@@ -8,7 +8,7 @@ export default function SidebarLayout({
   return (
     <div className="flex">
       <Sidebar />
-      <main className="bg-background flex-1">{children}</main>
+      <main className="bg-background flex-1 pl-48">{children}</main>
     </div>
   );
 }
