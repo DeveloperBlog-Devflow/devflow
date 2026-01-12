@@ -1,14 +1,36 @@
+'use client';
+
 import Image from 'next/image';
 import FeatureContent from '@/components/landing/FeatureContent';
+import { useLayoutEffect, useRef } from 'react';
+import { initLandingPreviewAnimation } from '@/animations/landingGSAP';
 
 const LandingPreview = () => {
+  const rootRef = useRef<HTMLDivElement>(null);
+  const titleRef = useRef<HTMLHeadingElement>(null);
+  const contentRef = useRef<HTMLDivElement>(null);
+
+  useLayoutEffect(() => {
+    if (!rootRef.current || !titleRef.current || !contentRef.current) return;
+
+    return initLandingPreviewAnimation({
+      rootEl: rootRef.current,
+      titleEl: titleRef.current,
+      contentContainerEl: contentRef.current,
+    });
+  }, []);
   return (
-    <div className="mt-30 flex h-full flex-col items-center justify-center space-y-3 pb-50 text-center">
-      <h1 className="text-4xl font-bold">체계적인 학습으로</h1>
+    <div
+      ref={rootRef}
+      className="mt-30 flex h-full flex-col items-center justify-center space-y-3 pt-50 pb-50 text-center"
+    >
+      <h1 ref={titleRef} className="text-4xl font-bold">
+        체계적인 학습으로
+      </h1>
       <h1 className="text-primary text-4xl font-bold">더 빠른 성장</h1>
       <div className="mx-20 mt-10 grid max-w-7xl grid-cols-1 items-start gap-10 lg:grid-cols-2 lg:gap-2">
         {/* 왼쪽: 400 밑으로 못 내려가게 */}
-        <div className="flex min-w-[355px] justify-center">
+        <div ref={contentRef} className="flex min-w-[355px] justify-center">
           <FeatureContent />
         </div>
 
