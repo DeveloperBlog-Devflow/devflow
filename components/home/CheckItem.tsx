@@ -14,7 +14,7 @@ export function CheckItem({ checked, text, onToggle }: CheckItemProps) {
       type="button"
       onClick={onToggle}
       className={[
-        'flex w-full items-center gap-4 rounded-2xl border px-5 py-2 text-left transition',
+        'flex w-full items-center gap-2.5 rounded-2xl border px-4 py-2 text-left transition',
         'bg-gray-50 hover:bg-gray-100',
         'border-gray-300',
       ].join(' ')}

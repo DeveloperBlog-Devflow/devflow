@@ -6,18 +6,18 @@ import ButtonSection from '@/components/home/ButtonSection';
 
 const Page = () => {
   return (
-    <div className="bg-background flex min-h-screen flex-col gap-6 font-sans md:p-[137px]">
+    <div className="bg-background flex min-h-screen flex-col gap-4 font-sans md:p-[137px]">
       {/* 1. Header */}
       <HeaderSection />
 
       {/* 2-1. ProfileSection */}
-      <ProfileSection className="grid grid-cols-1 gap-6 md:grid-cols-3" />
+      <ProfileSection className="grid grid-cols-1 gap-4 md:grid-cols-3" />
 
       {/* 2-2. GraphSection */}
       <GraphSection></GraphSection>
 
       {/* 2-3. BottomSection */}
-      <BottomSection className="grid grid-cols-1 gap-6 md:grid-cols-2" />
+      <BottomSection className="grid grid-cols-1 gap-4 md:grid-cols-2" />
 
       {/* 3. ButtonSection */}
       <ButtonSection />
