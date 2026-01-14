@@ -5,7 +5,7 @@ import { CheckItem } from './CheckItem';
 export type ChecklistItem = {
   id: string;
   text: string;
-  checked: boolean;
+  isChecked: boolean;
 };
 
 interface CheckListProps {
@@ -24,11 +24,11 @@ export default function CheckList({
   }
 
   return (
-    <div className="space-y-3">
+    <div className="space-y-2.5">
       {items.map((item) => (
         <CheckItem
           key={item.id}
-          checked={item.checked}
+          checked={item.isChecked}
           text={item.text}
           onToggle={() => onToggle(item.id)}
         />
