@@ -27,7 +27,7 @@ export const fetchTodos = async (uid: string): Promise<Todo[]> => {
   return snapshot.docs.map((doc) => ({
     id: doc.id,
     ...doc.data(),
-    createAt: doc.data().createAt.toDate(),
+    createAt: doc.data().createAt.toDate() ?? new Date(),
   })) as Todo[];
 };
 
