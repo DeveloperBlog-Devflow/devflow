@@ -11,7 +11,7 @@ interface AnimateOptions {
   yOffset?: number; // y축 이동 거리
 }
 
-/* Fad Up 함수 */
+/* Fade Up 함수 */
 const animateFadeUp = ({
   trigger,
   targets,
@@ -88,7 +88,6 @@ export const initFeatureListAnimation = ({
 
 /* --- 3. Landing Preview Section --- */
 export type LandingPreviewRefs = {
-  rootEl: HTMLElement;
   titleEl: HTMLHeadingElement;
   contentContainerEl: HTMLDivElement;
 };
@@ -97,7 +96,7 @@ export const initLandingPreviewAnimation = ({
   titleEl,
   contentContainerEl,
 }: LandingPreviewRefs) => {
-  const items = contentContainerEl.querySelectorAll('#fc-item');
+  const items = contentContainerEl.querySelectorAll('.fc-item');
 
   return animateFadeUp({
     trigger: titleEl,
