@@ -19,8 +19,9 @@ export interface Todo {
 }
 
 // 1. 할 일 목록 가져오기
-export const fetchTodos = async (): Promise<Todo[]> => {
-  const q = query(collection(db, 'todos'), orderBy('createAt', 'desc'));
+export const fetchTodos = async (uid: string): Promise<Todo[]> => {
+  const todosCollectionPath = collection(db, 'users', uid, 'todos');
+  const q = query(todosCollectionPath, orderBy('createAt', 'desc'));
   const snapshot = await getDocs(q);
 
   return snapshot.docs.map((doc) => ({
@@ -31,8 +32,8 @@ export const fetchTodos = async (): Promise<Todo[]> => {
 };
 
 // 2. 할 일 추가하기
-export const AddTodo = async (text: string) => {
-  await addDoc(collection(db, 'todos'), {
+export const AddTodo = async (uid: string, text: string) => {
+  await addDoc(collection(db, 'users', uid, 'todos'), {
     text,
     isChecked: false,
     createAt: Timestamp.now(),
@@ -40,8 +41,12 @@ export const AddTodo = async (text: string) => {
 };
 
 // 3. 완료 상태 토글
-export const toggleTodoStatus = async (id: string, currentStatus: boolean) => {
-  const todoRef = doc(db, 'todos', id);
+export const toggleTodoStatus = async (
+  uid: string,
+  todoId: string,
+  currentStatus: boolean
+) => {
+  const todoRef = doc(db, 'users', uid, 'todos', todoId);
   await updateDoc(todoRef, {
     isChecked: !currentStatus,
   });
