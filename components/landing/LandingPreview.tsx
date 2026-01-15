@@ -28,15 +28,18 @@ const LandingPreview = () => {
         체계적인 학습으로
       </h1>
       <h1 className="text-primary text-4xl font-bold">더 빠른 성장</h1>
-      <div className="mx-20 mt-10 grid max-w-7xl grid-cols-1 items-start gap-10 lg:grid-cols-2 lg:gap-2">
-        {/* 왼쪽: 400 밑으로 못 내려가게 */}
-        <div ref={contentRef} className="flex min-w-[355px] justify-center">
+      <div
+        className="mx-20 mt-10 grid max-w-7xl grid-cols-1 items-start gap-10 lg:grid-cols-2 lg:gap-2"
+        ref={contentRef}
+      >
+      
+        <div className="flex min-w-[355px] justify-center">
           <FeatureContent />
         </div>
 
-        {/* 오른쪽: 이미지 그대로 */}
         <div className="flex justify-center">
           <Image
+            id="fc-item"
             src="/PreviewImage.png"
             alt="DevFlow 미리보기"
             width={720}

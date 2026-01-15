@@ -23,7 +23,7 @@ const FeatureContent = () => {
   return (
     <ul className="space-y-6">
       {ITEMS.map((item) => (
-        <li key={item.title} className="fc-item">
+        <li key={item.title} id="fc-item">
           <div className="flex gap-3">
             <FiCheckCircle className="text-primary text-2xl" />
             <p className="text-xl font-medium">{item.title}</p>
