@@ -7,7 +7,6 @@ export interface Profile {
   email: string;
   streakDays: number;
   tilCount: number;
-  dailyGoal: number;
 }
 
 // 1. 유저 프로필 정보 가져오기
