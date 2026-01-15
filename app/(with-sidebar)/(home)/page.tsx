@@ -84,10 +84,14 @@ const Page = () => {
   useEffect(() => {
     if (currentUser) {
       const loadData = async () => {
-        const userProfile = await getProfile(currentUser.uid);
-        setProfile(userProfile);
-
-        await loadTodos(currentUser.uid);
+        try {
+          const userProfile = await getProfile(currentUser.uid);
+          setProfile(userProfile);
+          await loadTodos(currentUser.uid);
+        } catch (err) {
+          console.error(err);
+          setError('프로필 정보를 불러오는 데 실패하였습니다');
+        }
       };
       loadData();
     } else {
