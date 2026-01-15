@@ -19,7 +19,7 @@ const Editor = () => {
       <MDEditor
         value={value}
         onChange={(v) => setValue(v ?? '')}
-        height={850}
+        height={800}
         preview="live"
         textareaProps={{
           placeholder: '내용을 입력하세요',
