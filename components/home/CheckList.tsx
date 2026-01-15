@@ -1,22 +1,23 @@
 'use client';
 
+import { Todo } from '@/lib/home/todoService';
 import { CheckItem } from './CheckItem';
 
-export type ChecklistItem = {
-  id: string;
-  text: string;
-  isChecked: boolean;
-};
+// export type ChecklistItem = {
+//   id: string;
+//   text: string;
+//   isChecked: boolean;
+// };
 
 interface CheckListProps {
-  items: ChecklistItem[];
-  onToggle: (id: string) => void;
+  items: Todo[];
+  onToggleTodo: (id: string, currentStatus: boolean) => void;
   emptyText?: string;
 }
 
 export default function CheckList({
   items,
-  onToggle,
+  onToggleTodo,
   emptyText = '아직 항목이 없습니다',
 }: CheckListProps) {
   if (items.length === 0) {
@@ -30,7 +31,9 @@ export default function CheckList({
           key={item.id}
           checked={item.isChecked}
           text={item.text}
-          onToggle={() => onToggle(item.id)}
+          onToggle={() => {
+            onToggleTodo(item.id, item.isChecked);
+          }}
         />
       ))}
     </div>
