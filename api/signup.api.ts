@@ -6,6 +6,8 @@ export type SignupPayload = {
   nickname: string;
   email: string;
   password: string;
+  streakDays: number;
+  tilCount: number;
 };
 
 export async function signupWithEmail(p: SignupPayload) {
@@ -15,6 +17,8 @@ export async function signupWithEmail(p: SignupPayload) {
     nickname: p.nickname,
     email: p.email,
     createdAt: serverTimestamp(),
+    streakDays: 0,
+    tilCount: 0,
   });
   return cred.user;
 }

@@ -1,10 +1,12 @@
+import { Profile } from '@/lib/home/profileService';
 import Card from './Card';
 
 interface ProfileSectionProps {
   className?: string;
+  profile: Profile | null;
 }
 
-const ProfileSection = ({ className }: ProfileSectionProps) => {
+const ProfileSection = ({ className, profile }: ProfileSectionProps) => {
   return (
     <div className={className}>
       <div className="md:col-span-2">
@@ -14,12 +16,14 @@ const ProfileSection = ({ className }: ProfileSectionProps) => {
           </div>
 
           <div>
-            <h3 className="text-xl font-bold text-gray-900">이건무</h3>
-            <p className="text-sm text-gray-500">@mnmnnmm324</p>
+            <h3 className="text-xl font-bold text-gray-900">
+              {profile?.nickname}
+            </h3>
+            <p className="text-sm text-gray-500">{profile?.email}</p>
             <div className="mt-1 flex gap-2 text-xs font-medium">
-              <span className="text-primary">38193일 </span>연속
+              <span className="text-primary">{profile?.streakDays}일 </span>연속
               <span className="text-gray-400">|</span>
-              <span className="text-primary">12개 </span>TIL
+              <span className="text-primary">{profile?.tilCount}개 </span>TIL
             </div>
           </div>
         </Card>

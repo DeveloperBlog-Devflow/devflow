@@ -21,7 +21,7 @@ export interface Todo {
 // 1. 할 일 목록 가져오기
 export const fetchTodos = async (uid: string): Promise<Todo[]> => {
   const todosCollectionPath = collection(db, 'users', uid, 'todos');
-  const q = query(todosCollectionPath, orderBy('createAt', 'desc'));
+  const q = query(todosCollectionPath, orderBy('createAt', 'asc'));
   const snapshot = await getDocs(q);
 
   return snapshot.docs.map((doc) => ({

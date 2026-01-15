@@ -14,34 +14,19 @@ import {
   AddTodo,
   toggleTodoStatus,
 } from '@/lib/home/todoService';
+import { getProfile, Profile } from '@/lib/home/profileService';
 
 import { User, onAuthStateChanged } from 'firebase/auth';
 import { auth } from '@/lib/firebase';
 
 const Page = () => {
+  const [profile, setProfile] = useState<Profile | null>(null);
   const [todos, setTodos] = useState<Todo[]>([]);
+
   const [error, setError] = useState<string | null>(null);
 
   // 현재 사용자 정보
   const [currentUser, setCurrentUser] = useState<User | null>(null);
-
-  // 사용자 로그인 상태 감지
-  useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      setCurrentUser(user);
-    });
-
-    return () => unsubscribe();
-  }, []);
-
-  // 사용자가 존재하면 데이터 불러옴
-  useEffect(() => {
-    if (currentUser) {
-      loadTodos(currentUser.uid);
-    } else {
-      setTodos([]);
-    }
-  }, [currentUser]);
 
   // 1. 할 일 목록 불러오기
   const loadTodos = async (uid: string) => {
@@ -86,6 +71,36 @@ const Page = () => {
     }
   };
 
+  // 사용자 로그인 상태 감지
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      setCurrentUser(user);
+    });
+
+    return () => unsubscribe();
+  }, []);
+
+  // 사용자가 존재하면 데이터 불러옴
+  useEffect(() => {
+    if (currentUser) {
+      const loadData = async () => {
+        try {
+          const userProfile = await getProfile(currentUser.uid);
+          setProfile(userProfile);
+          await loadTodos(currentUser.uid);
+        } catch (err) {
+          console.error(err);
+          setError('프로필 정보를 불러오는 데 실패하였습니다');
+        }
+      };
+      loadData();
+    } else {
+      setTodos([]);
+      setProfile(null);
+    }
+  }, [currentUser]);
+
+  // 유저 정보가 없을 시
   if (!currentUser) {
     return (
       <div className="flex min-h-screen items-center justify-center">
@@ -94,13 +109,17 @@ const Page = () => {
     );
   }
 
+  // 유저 정보가 있을 시
   return (
     <div className="bg-background flex min-h-screen flex-col gap-4 font-sans md:p-[137px]">
       {/* 1. Header */}
       <HeaderSection />
 
       {/* 2-1. ProfileSection */}
-      <ProfileSection className="grid grid-cols-1 gap-4 md:grid-cols-3" />
+      <ProfileSection
+        className="grid grid-cols-1 gap-4 md:grid-cols-3"
+        profile={profile}
+      />
 
       {/* 2-2. GraphSection */}
       <GraphSection></GraphSection>
