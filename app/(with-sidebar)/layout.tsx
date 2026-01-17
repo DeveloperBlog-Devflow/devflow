@@ -1,5 +1,8 @@
 import Sidebar from '@/components/common/Sidebar';
 
+import '@uiw/react-md-editor/markdown-editor.css';
+import '@uiw/react-markdown-preview/markdown.css';
+
 export default function SidebarLayout({
   children,
 }: {
