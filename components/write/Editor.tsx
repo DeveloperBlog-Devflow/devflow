@@ -4,6 +4,8 @@ import dynamic from 'next/dynamic';
 import { useState } from 'react';
 import type { MDEditorProps } from '@uiw/react-md-editor';
 import SaveButton from '@/components/write/SaveButton';
+import { createPost } from '@/services/write/post.service';
+import { auth } from '@/lib/firebase';
 
 const MDEditor = dynamic<MDEditorProps>(() => import('@uiw/react-md-editor'), {
   ssr: false,
@@ -16,7 +18,26 @@ const Editor = () => {
     setValue('');
   };
 
-  const onClickSave = () => {};
+  const onClickSave = async () => {
+    const user = auth.currentUser;
+    if (!user) {
+      alert('로그인이 필요합니다');
+      return;
+    }
+    if (!value.trim()) {
+      alert('내용을 입력하세요');
+      return;
+    }
+
+    try {
+      const id = await createPost(user.uid, value);
+      alert('저장 완료!');
+      console.log('postId:', id);
+    } catch (e) {
+      console.error(e);
+      alert('저장 실패');
+    }
+  };
 
   return (
     <div
