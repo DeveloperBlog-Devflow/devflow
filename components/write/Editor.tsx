@@ -6,6 +6,7 @@ import type { MDEditorProps } from '@uiw/react-md-editor';
 import SaveButton from '@/components/write/SaveButton';
 import { createPost } from '@/services/write/post.service';
 import { auth } from '@/lib/firebase';
+import { useRouter } from 'next/navigation';
 
 const MDEditor = dynamic<MDEditorProps>(() => import('@uiw/react-md-editor'), {
   ssr: false,
@@ -13,6 +14,7 @@ const MDEditor = dynamic<MDEditorProps>(() => import('@uiw/react-md-editor'), {
 
 const Editor = () => {
   const [value, setValue] = useState<string>('');
+  const router = useRouter();
 
   const onClickCancel = () => {
     setValue('');
@@ -33,6 +35,8 @@ const Editor = () => {
       const id = await createPost(user.uid, value);
       alert('저장 완료!');
       console.log('postId:', id);
+
+      router.push(`/write/${id}`);
     } catch (e) {
       console.error(e);
       alert('저장 실패');
