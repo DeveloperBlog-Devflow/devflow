@@ -58,7 +58,7 @@ const Page = () => {
           {/* 왼쪽: 텍스트 영역 */}
           <div className="flex flex-col gap-1">
             <span className="text-text-sub text-sm font-medium">
-              전체 플랜 수
+              진행중인 플랜 수
             </span>
             <span className="text-4xl font-bold text-[#7B44C4]">1</span>
           </div>
@@ -72,7 +72,7 @@ const Page = () => {
           {/* 왼쪽: 텍스트 영역 */}
           <div className="flex flex-col gap-1">
             <span className="text-text-sub text-sm font-medium">
-              전체 플랜 수
+              완료된 플랜 수
             </span>
             <span className="text-4xl font-bold text-[#00841F]">1</span>
           </div>
