@@ -24,7 +24,7 @@ const ButtonSection = ({ onAddTodo }: ButtonSectionProps) => {
         onClick={handleAddClick}
         className="flex-1 rounded-xl border border-slate-300 bg-none py-4 text-center text-base font-semibold text-slate-700 transition hover:bg-slate-200 active:bg-slate-300 disabled:cursor-not-allowed disabled:opacity-60"
       >
-        계획 추가하기
+        플랜 추가하기
       </button>
     </div>
   );
