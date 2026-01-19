@@ -8,7 +8,7 @@ import { auth } from '@/lib/firebase';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
-import { signupWithGithub } from '@/api/signup.api';
+import { signupWithGithub } from '@/services/auth/signup.service';
 
 type LoginFormProps = {
   handleOpenModal: () => void;

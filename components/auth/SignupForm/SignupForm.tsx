@@ -4,7 +4,7 @@ import Link from 'next/link';
 import FormField from '@/components/auth/FormField';
 import { SignupValues, useSignupForm } from './useSignupForm';
 import { useRouter } from 'next/navigation';
-import { signupWithEmail } from '@/api/signup.api';
+import { signupWithEmail } from '@/services/auth/signup.service';
 
 const toPayload = (v: SignupValues) => ({
   nickname: v.nickname,
