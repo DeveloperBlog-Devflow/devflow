@@ -1,18 +1,20 @@
 import { Profile } from '@/lib/home/profileService';
 import Card from './Card';
-
+import { getRandomProfileIcon } from '@/utils/getRandomProfileIcon';
 interface ProfileSectionProps {
   className?: string;
   profile: Profile | null;
+  uid: string;
 }
 
-const ProfileSection = ({ className, profile }: ProfileSectionProps) => {
+const ProfileSection = ({ className, profile, uid }: ProfileSectionProps) => {
+  const icon = getRandomProfileIcon(uid);
   return (
     <div className={className}>
       <div className="md:col-span-2">
         <Card className="flex items-center gap-4">
-          <div className="flex h-16 w-16 items-center justify-center overflow-hidden rounded-full border border-gray-100 bg-purple-100">
-            <span className="text-3xl">😈</span>
+          <div className="flex h-16 w-16 items-center justify-center overflow-hidden rounded-full border border-gray-100 bg-purple-100 pt-1">
+            <span className="text-3xl">{icon}</span>
           </div>
 
           <div>
