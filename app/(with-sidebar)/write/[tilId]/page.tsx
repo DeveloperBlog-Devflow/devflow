@@ -1,12 +1,12 @@
 import PostDetail from '@/components/write/PostDetail';
 
 type Props = {
-  params: Promise<{ postId: string }>;
+  params: Promise<{ tilId: string }>;
 };
 
 const Page = async ({ params }: Props) => {
-  const { postId } = await params;
-  return <PostDetail postId={postId} />;
+  const { tilId } = await params;
+  return <PostDetail tilId={tilId} />;
 };
 
 export default Page;

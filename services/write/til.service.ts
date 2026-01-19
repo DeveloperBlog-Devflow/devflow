@@ -8,18 +8,18 @@ import {
 } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 
-export type PostData = {
+export type TilData = {
   title: string;
   content: string;
   createdAt: Timestamp | null;
   updatedAt: Timestamp | null;
 };
 
-export type Post = PostData & { id: string };
+export type Til = TilData & { id: string };
 
-export async function createPost(uid: string, content: string, title: string) {
-  const postsCol = collection(db, 'users', uid, 'posts');
-  const docRef = await addDoc(postsCol, {
+export async function createTil(uid: string, content: string, title: string) {
+  const tilsCol = collection(db, 'users', uid, 'tils');
+  const docRef = await addDoc(tilsCol, {
     title: title,
     content,
     createdAt: serverTimestamp(),
@@ -33,7 +33,7 @@ function isRecord(v: unknown): v is Record<string, unknown> {
   return typeof v === 'object' && v !== null;
 }
 
-function parsePostData(raw: unknown): PostData | null {
+function parseTilData(raw: unknown): TilData | null {
   if (!isRecord(raw)) return null;
 
   const content = raw.content;
@@ -49,20 +49,20 @@ function parsePostData(raw: unknown): PostData | null {
   return { title, content, createdAt, updatedAt };
 }
 
-export async function fetchMyPost(
+export async function fetchMyTil(
   uid: string | null | undefined,
-  postId: string | null | undefined
-): Promise<Post | null> {
-  // 여기서 uid/postId 실물 확인
-  console.log('[fetchMyPost] path =', { uid, postId });
+  tilId: string | null | undefined
+): Promise<Til | null> {
+  // 여기서 uid/tilId 실물 확인
+  console.log('[fetchMyPost] path =', { uid, tilId });
 
-  if (!uid || !postId) return null;
+  if (!uid || !tilId) return null;
 
-  const ref = doc(db, 'users', uid, 'posts', postId);
+  const ref = doc(db, 'users', uid, 'tils', tilId);
   const snap = await getDoc(ref);
   if (!snap.exists()) return null;
 
-  const parsed = parsePostData(snap.data());
+  const parsed = parseTilData(snap.data());
   if (!parsed) return null;
 
   return { id: snap.id, ...parsed };

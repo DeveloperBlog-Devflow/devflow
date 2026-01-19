@@ -4,7 +4,7 @@ import dynamic from 'next/dynamic';
 import { useState } from 'react';
 import type { MDEditorProps } from '@uiw/react-md-editor';
 import SaveButton from '@/components/write/SaveButton';
-import { createPost } from '@/services/write/post.service';
+import { createTil } from '@/services/write/til.service';
 import { auth } from '@/lib/firebase';
 import { useRouter } from 'next/navigation';
 
@@ -37,7 +37,7 @@ const Editor = () => {
     }
 
     try {
-      const id = await createPost(user.uid, value, title);
+      const id = await createTil(user.uid, value, title);
       alert('저장 완료!');
       console.log('postId:', id);
 
