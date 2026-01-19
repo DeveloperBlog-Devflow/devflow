@@ -1,4 +1,3 @@
-// components/dashboard/TaskItem.tsx
 import { Check } from 'lucide-react';
 
 interface TaskItemProps {
