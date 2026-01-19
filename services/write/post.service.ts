@@ -17,10 +17,10 @@ export type PostData = {
 
 export type Post = PostData & { id: string };
 
-export async function createPost(uid: string, content: string, title?: string) {
+export async function createPost(uid: string, content: string, title: string) {
   const postsCol = collection(db, 'users', uid, 'posts');
   const docRef = await addDoc(postsCol, {
-    title: title ?? '',
+    title: title,
     content,
     createdAt: serverTimestamp(),
     updatedAt: serverTimestamp(),
@@ -39,7 +39,8 @@ function parsePostData(raw: unknown): PostData | null {
   const content = raw.content;
   if (typeof content !== 'string') return null; // content는 필수
 
-  const title = typeof raw.title === 'string' ? raw.title : '';
+  const title = raw.title;
+  if (typeof title !== 'string') return null;
 
   const createdAt = raw.createdAt instanceof Timestamp ? raw.createdAt : null;
 
@@ -52,7 +53,7 @@ export async function fetchMyPost(
   uid: string | null | undefined,
   postId: string | null | undefined
 ): Promise<Post | null> {
-  // ✅ 여기서 uid/postId 실물 확인
+  // 여기서 uid/postId 실물 확인
   console.log('[fetchMyPost] path =', { uid, postId });
 
   if (!uid || !postId) return null;
