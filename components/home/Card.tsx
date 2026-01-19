@@ -10,9 +10,7 @@ interface CardProps {
 
 const Card = ({ children, className = '', title }: CardProps) => {
   return (
-    <div
-      className={`border-border bg-surface rounded-[10px] p-6 shadow-sm ${className}`}
-    >
+    <div className={`bg-surface rounded-[10px] p-6 shadow-sm ${className}`}>
       {title && (
         <h2 className="mb-4 text-lg font-bold text-gray-900">{title}</h2>
       )}
