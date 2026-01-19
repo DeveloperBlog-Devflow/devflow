@@ -119,6 +119,7 @@ const Page = () => {
       <ProfileSection
         className="grid grid-cols-1 gap-4 md:grid-cols-3"
         profile={profile}
+        uid={currentUser.uid}
       />
 
       {/* 2-2. GraphSection */}
