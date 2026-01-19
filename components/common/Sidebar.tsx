@@ -16,7 +16,7 @@ const navItems = [
   { label: '홈', href: '/', icon: Home },
   { label: '개발 일지', href: '/logs', icon: ClipboardList },
   { label: '새 계획 만들기', href: '/plans/new', icon: CalendarPlus },
-  { label: '새 페이지 만들기', href: '/pages/new', icon: CopyPlus },
+  { label: '새 페이지 만들기', href: '/write', icon: CopyPlus },
 ];
 
 const Sidebar = () => {
