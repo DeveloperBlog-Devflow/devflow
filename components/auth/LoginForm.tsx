@@ -5,14 +5,10 @@ import { FaGithub } from 'react-icons/fa';
 import Button from '@/components/auth/Button';
 import Link from 'next/link';
 import { auth } from '@/lib/firebase';
-import {
-  GithubAuthProvider,
-  signInWithEmailAndPassword,
-  signInWithPopup,
-  UserCredential,
-} from 'firebase/auth';
+import { signInWithEmailAndPassword } from 'firebase/auth';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
+import { signupWithGithub } from '@/api/signup.api';
 
 type LoginFormProps = {
   handleOpenModal: () => void;
@@ -26,16 +22,9 @@ const LoginForm = ({ handleOpenModal }: LoginFormProps) => {
 
   const router = useRouter();
 
-  const githubProvider = new GithubAuthProvider();
-
   const handleGithubLogin = async () => {
     try {
-      const result: UserCredential = await signInWithPopup(
-        auth,
-        githubProvider
-      );
-      const user = result.user;
-      // console.log('로그인 성공 : ', user);
+      await signupWithGithub();
       router.push('/');
     } catch (err: unknown) {
       if (err instanceof Error) {
