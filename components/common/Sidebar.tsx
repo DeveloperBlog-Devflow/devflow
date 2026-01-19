@@ -17,7 +17,8 @@ const navItems = [
   { label: '개발 일지', href: '/logs', icon: ClipboardList },
   { label: '계획 관리', href: '/plans/new', icon: CalendarPlus },
   { label: '새 페이지 만들기', href: '/pages/new', icon: CopyPlus },
-];
+]
+
 
 const Sidebar = () => {
   const pathname = usePathname();
