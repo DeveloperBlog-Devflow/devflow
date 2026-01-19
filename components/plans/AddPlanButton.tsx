@@ -1,4 +1,3 @@
-// components/dashboard/AddPlanButton.tsx
 import { Plus } from 'lucide-react';
 
 export default function AddPlanButton() {
