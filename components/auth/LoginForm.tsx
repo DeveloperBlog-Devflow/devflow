@@ -23,12 +23,16 @@ const LoginForm = ({ handleOpenModal }: LoginFormProps) => {
   const router = useRouter();
 
   const handleGithubLogin = async () => {
+    if (isLoading) return;
+    setIsLoading(true);
+    setError('');
     try {
       await signupWithGithub();
       router.push('/');
     } catch (err: unknown) {
-      if (err instanceof Error) {
-      }
+      setError('Github 로그인에 실패했습니다.');
+    } finally {
+      setIsLoading(false);
     }
   };
 
