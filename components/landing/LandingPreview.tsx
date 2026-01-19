@@ -1,20 +1,45 @@
+'use client';
+
 import Image from 'next/image';
 import FeatureContent from '@/components/landing/FeatureContent';
+import { useLayoutEffect, useRef } from 'react';
+import { initLandingPreviewAnimation } from '@/animations/landingGSAP';
 
 const LandingPreview = () => {
+  const titleRef = useRef<HTMLHeadingElement>(null);
+  const contentRef = useRef<HTMLDivElement>(null);
+
+  useLayoutEffect(() => {
+    if (!titleRef.current || !contentRef.current) return;
+
+    return initLandingPreviewAnimation({
+      titleEl: titleRef.current,
+      contentContainerEl: contentRef.current,
+    });
+  }, []);
   return (
-    <div className="mt-30 flex h-full flex-col items-center justify-center space-y-3 pb-50 text-center">
-      <h1 className="text-4xl font-bold">체계적인 학습으로</h1>
+    <div className="mt-30 flex h-full flex-col items-center justify-center space-y-3 pt-50 pb-50 text-center">
+      <h1 ref={titleRef} className="text-4xl font-bold">
+        체계적인 학습으로
+      </h1>
       <h1 className="text-primary text-4xl font-bold">더 빠른 성장</h1>
-      <div className="mx-20 mt-10 flex flex-col items-center gap-10 lg:flex-row lg:items-start lg:gap-50">
-        <FeatureContent />
-        <Image
-          src="/PreviewImage.png"
-          alt="DevFlow 미리보기"
-          width={720}
-          height={400}
-          className="w-full max-w-[480px] min-w-[360px] flex-shrink-0 object-contain md:max-w-[560px] lg:max-w-[640px] xl:max-w-[720px]"
-        />
+      <div
+        className="mx-20 mt-10 grid max-w-7xl grid-cols-1 items-start gap-10 lg:grid-cols-2 lg:gap-2"
+        ref={contentRef}
+      >
+        <div className="flex min-w-[355px] justify-center">
+          <FeatureContent />
+        </div>
+
+        <div className="flex justify-center">
+          <Image
+            src="/PreviewImage.png"
+            alt="DevFlow 미리보기"
+            width={720}
+            height={400}
+            className="fc-item w-full max-w-[480px] min-w-[360px] object-contain md:max-w-[560px] lg:max-w-[640px] xl:max-w-[720px]"
+          />
+        </div>
       </div>
     </div>
   );

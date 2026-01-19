@@ -1,25 +1,31 @@
+import { Profile } from '@/lib/home/profileService';
 import Card from './Card';
-
+import { getRandomProfileIcon } from '@/utils/getRandomProfileIcon';
 interface ProfileSectionProps {
   className?: string;
+  profile: Profile | null;
+  uid: string;
 }
 
-const ProfileSection = ({ className }: ProfileSectionProps) => {
+const ProfileSection = ({ className, profile, uid }: ProfileSectionProps) => {
+  const icon = getRandomProfileIcon(uid);
   return (
     <div className={className}>
       <div className="md:col-span-2">
         <Card className="flex items-center gap-4">
-          <div className="flex h-16 w-16 items-center justify-center overflow-hidden rounded-full border border-gray-100 bg-purple-100">
-            <span className="text-3xl">😈</span>
+          <div className="flex h-16 w-16 items-center justify-center overflow-hidden rounded-full border border-gray-100 bg-purple-100 pt-1">
+            <span className="text-3xl">{icon}</span>
           </div>
 
           <div>
-            <h3 className="text-xl font-bold text-gray-900">이건무</h3>
-            <p className="text-sm text-gray-500">@mnmnnmm324</p>
+            <h3 className="text-xl font-bold text-gray-900">
+              {profile?.nickname}
+            </h3>
+            <p className="text-sm text-gray-500">{profile?.email}</p>
             <div className="mt-1 flex gap-2 text-xs font-medium">
-              <span className="text-primary">38193일 </span>연속
+              <span className="text-primary">{profile?.streakDays}일 </span>연속
               <span className="text-gray-400">|</span>
-              <span className="text-primary">12개 </span>TIL
+              <span className="text-primary">{profile?.tilCount}개 </span>TIL
             </div>
           </div>
         </Card>
