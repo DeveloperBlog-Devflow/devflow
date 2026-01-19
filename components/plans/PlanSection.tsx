@@ -1,5 +1,4 @@
-// components/dashboard/PlanSection.tsx
-'use client'; // 상태 관리를 위해 클라이언트 컴포넌트 선언
+'use client';
 
 import { useState } from 'react';
 import { ChevronDown, ChevronUp, Plus } from 'lucide-react';

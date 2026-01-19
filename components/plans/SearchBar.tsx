@@ -1,4 +1,3 @@
-// components/dashboard/SearchBar.tsx
 import { Search } from 'lucide-react';
 
 export default function SearchBar() {
