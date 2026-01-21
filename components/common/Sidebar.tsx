@@ -26,8 +26,8 @@ const Sidebar = () => {
   const handleLogout = async (): Promise<void> => {
     try {
       await signOut(auth);
+      alert('로그아웃 되었습니다.');
       router.replace('/landing');
-      router.refresh(); // 서버 컴포넌트/세션 UI 갱신
     } catch (err) {
       console.error('로그아웃 실패:', err);
       alert('로그아웃에 실패했습니다.');
