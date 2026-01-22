@@ -26,8 +26,7 @@ const InlineAddPlanForm = ({ onSave, onCancel }: InlineAddPlanFormProps) => {
           type="text"
           value={title}
           onChange={(e) => setTitle(e.target.value)}
-          placeholder="플랜 제목 (예: React Hooks 
-      마스터하기)"
+          placeholder="플랜 제목 (예: React Hooks 마스터하기)"
           className="border-border focus:border-border-focus-blue w-full rounded-lg border-2 p-3 text-base font-bold placeholder-gray-400 focus:outline-none"
         />
         <textarea
