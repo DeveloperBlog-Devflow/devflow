@@ -36,7 +36,6 @@ export const signupWithGithub = async () => {
   const info = getAdditionalUserInfo(result);
   const githubUsername = info?.username ?? null;
   const avatar_url = info?.profile?.avatar_url;
-  console.log(info);
   const userRef = doc(db, 'users', user.uid);
   const snap = await getDoc(userRef);
 

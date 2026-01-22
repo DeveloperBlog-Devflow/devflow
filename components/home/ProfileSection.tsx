@@ -12,7 +12,6 @@ interface ProfileSectionProps {
 const ProfileSection = ({ className, profile, uid }: ProfileSectionProps) => {
   const icon = getRandomProfileIcon(uid);
   const avatarUrl = profile?.avatar_url;
-  console.log(avatarUrl);
 
   return (
     <div className={className}>
