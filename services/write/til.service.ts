@@ -3,6 +3,7 @@ import {
   getDoc,
   collection,
   addDoc,
+  updateDoc,
   serverTimestamp,
   Timestamp,
 } from 'firebase/firestore';
@@ -66,4 +67,18 @@ export async function fetchMyTil(
   if (!parsed) return null;
 
   return { id: snap.id, ...parsed };
+}
+
+export async function updateTil(
+  uid: string,
+  tilId: string,
+  title: string,
+  content: string
+) {
+  const ref = doc(db, 'users', uid, 'tils', tilId);
+  await updateDoc(ref, {
+    title,
+    content,
+    updatedAt: serverTimestamp(),
+  });
 }
