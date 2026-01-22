@@ -15,11 +15,13 @@ const TilCard = ({ item }: Props) => {
   };
 
   return (
-    <article
-      className="relative rounded-3xl border border-black/10 bg-white px-10 py-8"
-      onClick={onClickCard}
-    >
-      <h3 className="text-xl font-extrabold text-black/70">{item.title}</h3>
+    <article className="relative rounded-3xl border border-black/10 bg-white px-10 py-8">
+      <h3
+        className="cursor-pointer text-xl font-extrabold text-black/70"
+        onClick={onClickCard}
+      >
+        {item.title}
+      </h3>
 
       <div className="mt-6 space-y-1 text-sm font-semibold text-black/45">
         <p className="truncate">{item.preview}</p>
