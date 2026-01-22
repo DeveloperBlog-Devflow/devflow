@@ -116,6 +116,12 @@ export default function PlanSection({
   const completedCount = tasks.filter((t) => t.isChecked).length;
   const totalCount = tasks.length;
 
+  // isOpen 상태 false 시 포커스 초기화
+  useEffect(() => {
+    setIsAddingTask(false); //
+    setShowMenu(false); // 드롭다운 메뉴
+  }, [isOpen]);
+
   return (
     <Card className="mb-4 transition-all duration-200">
       {/* 헤더 영역 */}
