@@ -97,7 +97,7 @@ export const addPlanItem = async (
     text,
     isChecked: false,
     deadline: deadline ? Timestamp.fromDate(deadline) : null,
-    createAt: Timestamp.now(),
+    createdAt: Timestamp.now(),
   });
 };
 

@@ -1,3 +1,5 @@
+'use client';
+
 import { useState } from 'react';
 import { Calendar, Plus, X } from 'lucide-react';
 
@@ -21,10 +23,11 @@ export default function InlineAddTaskForm({
     if (!text.trim() || isSubmitting) return;
 
     setIsSubmitting(true);
+
     try {
       await onSave(text, selectedDate);
-      setText(''); // 저장 후 초기화 (연속 입력을 위해 폼을 닫지 않을 수도 있음)
-      // onCancel(); // 저장 후 닫고 싶다면 주석 해제
+      setText(''); // 저장 후 초기화
+      onCancel(); // 저장 후 닫기
     } catch (error) {
       console.error(error);
     } finally {

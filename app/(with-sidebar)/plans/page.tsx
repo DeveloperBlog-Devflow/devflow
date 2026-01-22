@@ -72,15 +72,49 @@ const Page = () => {
       {/* 상단 통계 카드 (Grid) - TODO: 실제 데이터 연동 */}
       <div className="mb-4 grid grid-cols-1 gap-3.5 md:grid-cols-3">
         <Card className="flex items-center justify-between border-2 border-[#D5DCFB]">
+          {/* 왼쪽: 텍스트 영역 */}
           <div className="flex flex-col gap-1">
-            <span className="text-text-sub text-sm font-medium">전체 플랜 수</span>
-            <span className="text-4xl font-bold text-[#4757D3]">{plans.length}</span>
+            <span className="text-text-sub text-sm font-medium">
+              전체 플랜 수
+            </span>
+            <span className="text-4xl font-bold text-[#4757D3]">
+              {plans.length}
+            </span>
           </div>
+
+          {/* 오른쪽: 아이콘 영역 */}
           <div className="flex h-12 w-12 items-center justify-center rounded-full bg-[#D5DCFB] text-[#556BD6]">
             <Target size={24} strokeWidth={2.5} />
           </div>
         </Card>
-        {/* 다른 카드들도 위와 같이 plans 배열을 이용해 동적으로 값 표시 가능 */}
+        <Card className="flex items-center justify-between border-2 border-[#EBDBFC]">
+          {/* 왼쪽: 텍스트 영역 */}
+          <div className="flex flex-col gap-1">
+            <span className="text-text-sub text-sm font-medium">
+              진행중인 플랜 수
+            </span>
+            <span className="text-4xl font-bold text-[#7B44C4]">1</span>
+          </div>
+
+          {/* 오른쪽: 아이콘 영역 */}
+          <div className="flex h-12 w-12 items-center justify-center rounded-full bg-[#EBDBFC] text-[#7B44C4]">
+            <Calendar size={24} strokeWidth={2.5} />
+          </div>
+        </Card>
+        <Card className="flex items-center justify-between border-2 border-[#C6F6D7]">
+          {/* 왼쪽: 텍스트 영역 */}
+          <div className="flex flex-col gap-1">
+            <span className="text-text-sub text-sm font-medium">
+              완료된 플랜 수
+            </span>
+            <span className="text-4xl font-bold text-[#00841F]">1</span>
+          </div>
+
+          {/* 오른쪽: 아이콘 영역 */}
+          <div className="flex h-12 w-12 items-center justify-center rounded-full bg-[#C6F6D7] text-[#00841F]">
+            <CheckCircle2 size={24} strokeWidth={2.5} />
+          </div>
+        </Card>
       </div>
 
       <SearchBar />

@@ -4,15 +4,14 @@ import { useState, useEffect } from 'react';
 import { ChevronDown, ChevronUp, Plus } from 'lucide-react';
 import Card from '../home/Card';
 import TaskItem from './TaskItem';
-import InlineAddTaskForm from './InlineAddTaskForm'; // 새로 추가
+import InlineAddTaskForm from './InlineAddTaskForm';
 import {
-  fecthPlanItems,
+  fecthPlanItems, // lib/planManageService의 함수명 오타 주의 (fetchPlanItems인지 확인)
   toggleItemStatus,
   PlanItem,
   addPlanItem,
 } from '@/lib/planManageService';
 
-// PlanSection이 받을 Props 타입 정의
 interface PlanSectionProps {
   userId: string;
   planId: string;
@@ -29,47 +28,67 @@ export default function PlanSection({
   const [isOpen, setIsOpen] = useState(true);
   const [tasks, setTasks] = useState<PlanItem[]>([]);
   const [isTasksLoading, setIsTasksLoading] = useState(true);
-  const [isAddingTask, setIsAddingTask] = useState(false); // 하위 항목 추가 폼 표시 여부
+  const [isAddingTask, setIsAddingTask] = useState(false);
 
-  // 하위 항목 목록을 불러오는 함수
-  const loadTasks = async () => {
-    try {
-      setIsTasksLoading(true);
-      const fetchedTasks = await fecthPlanItems(userId, planId);
-      setTasks(fetchedTasks);
-    } catch (error) {
-      console.error('하위 항목을 불러오는 데 실패했습니다.', error);
-      setTasks([]); // 에러 발생 시 목록 비우기
-    } finally {
-      setIsTasksLoading(false);
-    }
-  };
-
-  // 컴포넌트가 마운트되거나, planId가 바뀔 때 하위 항목을 불러옵니다.
+  // 1. 초기 데이터 로드 (Page.tsx와 동일한 패턴)
+  // useEffect 안에서 로직을 직접 수행합니다.
   useEffect(() => {
-    if (userId && planId) {
-      loadTasks();
-    }
-  }, [userId, planId]);
+    const loadInitialTasks = async () => {
+      // userId나 planId가 없으면 로드하지 않음
+      if (!userId || !planId) return;
 
-  // 하위 항목 상태(완료/미완료)를 토글하는 핸들러
+      try {
+        setIsTasksLoading(true);
+        const fetchedTasks = await fecthPlanItems(userId, planId);
+        setTasks(fetchedTasks);
+      } catch (error) {
+        console.error('하위 항목 로딩 실패:', error);
+        setTasks([]);
+      } finally {
+        setIsTasksLoading(false);
+      }
+    };
+
+    loadInitialTasks();
+  }, [userId, planId]); // userId나 planId가 바뀔 때만 실행됨
+
+  // 2. 하위 항목 상태(완료/미완료) 토글 핸들러
   const handleToggleTask = async (itemId: string, currentStatus: boolean) => {
     try {
+      // (옵션) UI 반응성을 위해 미리 상태 업데이트 (Optimistic Update)
+      setTasks((prev) =>
+        prev.map((task) =>
+          task.id === itemId ? { ...task, isChecked: !currentStatus } : task
+        )
+      );
+
+      // DB 업데이트
       await toggleItemStatus(userId, itemId, currentStatus);
-      await loadTasks(); // 토글 후 목록 새로고침
+
+      // 데이터 최신화: DB 업데이트 후 목록을 다시 불러옵니다.
+      const updatedTasks = await fecthPlanItems(userId, planId);
+      setTasks(updatedTasks);
     } catch (error) {
-      console.error('항목 상태 변경에 실패했습니다.', error);
+      console.error('상태 변경 실패:', error);
+      // 에러 시 원래대로 돌리거나 다시 불러오기
+      const rolledBackTasks = await fecthPlanItems(userId, planId);
+      setTasks(rolledBackTasks);
     }
   };
 
-  // 하위 항목을 저장하는 핸들러 (InlineAddTaskForm의 onSave에 연결)
+  // 3. 하위 항목 추가 저장 핸들러
   const handleSaveTask = async (text: string, deadline?: Date) => {
     try {
+      // DB에 추가
       await addPlanItem(userId, planId, text, deadline);
-      await loadTasks(); // 추가 후 목록 새로고침
-      setIsAddingTask(false); // 폼 닫기
+
+      // 데이터 최신화: 추가 후 목록을 다시 불러옵니다.
+      const updatedTasks = await fecthPlanItems(userId, planId);
+      setTasks(updatedTasks);
+
+      setIsAddingTask(false); // 입력 폼 닫기
     } catch (error) {
-      console.error('하위 항목 추가에 실패했습니다.', error);
+      console.error('하위 항목 추가 실패:', error);
     }
   };
 
@@ -79,7 +98,7 @@ export default function PlanSection({
 
   return (
     <Card className="mb-4 transition-all duration-200">
-      {/* 헤더 영역 (클릭 시 토글) */}
+      {/* 헤더 영역 */}
       <div
         className="flex cursor-pointer items-start justify-between"
         onClick={() => setIsOpen(!isOpen)}
@@ -105,10 +124,15 @@ export default function PlanSection({
       {/* 펼쳐지는 내용 영역 */}
       {isOpen && (
         <div className="animate-fadeIn mt-6">
-          {/* 할 일 목록 */}
           <div className="flex flex-col gap-2">
             {isTasksLoading ? (
-              <p className="text-center text-gray-500">하위 항목을 불러오는 중...</p>
+              <p className="py-4 text-center text-sm text-gray-400">
+                로딩 중...
+              </p>
+            ) : tasks.length === 0 && !isAddingTask ? (
+              <p className="py-2 text-center text-sm text-gray-400">
+                등록된 하위 항목이 없습니다.
+              </p>
             ) : (
               tasks.map((task) => (
                 <TaskItem
@@ -123,7 +147,7 @@ export default function PlanSection({
             )}
           </div>
 
-          {/* 하위 항목 추가 폼 또는 버튼 */}
+          {/* 추가 폼 영역 */}
           {isAddingTask ? (
             <InlineAddTaskForm
               onSave={handleSaveTask}
