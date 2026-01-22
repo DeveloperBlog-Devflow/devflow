@@ -37,7 +37,7 @@ const Sidebar = () => {
   };
 
   return (
-    <div className="fixed flex h-screen w-48 flex-col bg-white">
+    <div className="fixed z-100 flex h-screen w-48 flex-col bg-white">
       <div className="flex items-center gap-2 px-6 py-5">
         <span className="text-primary text-lg font-bold">&lt;/&gt;</span>
         <span>DevFlow</span>
