@@ -1,106 +1,121 @@
-import FormField from '@/components/auth/FormField';
+'use client';
+
+import { useState, useEffect } from 'react';
+import { User, onAuthStateChanged } from 'firebase/auth';
+import { auth } from '@/lib/firebase';
+import { addPlan, fetchPlans, Plan } from '@/lib/planManageService';
+
 import PageHeader from '@/components/common/PageHeader';
 import Card from '@/components/home/Card';
 import AddPlanButton from '@/components/plans/AddPlanButton';
 import PlanSection from '@/components/plans/PlanSection';
 import SearchBar from '@/components/plans/SearchBar';
-
+import InlineAddPlanForm from '@/components/plans/InlineAddPlanForm';
 import { Target, Calendar, CheckCircle2 } from 'lucide-react';
 
-const sampleTasks = [
-  {
-    id: 1,
-    text: 'useState, useEffect 기초',
-    date: '2025-01-20',
-    isChecked: true,
-  },
-  {
-    id: 2,
-    text: 'useContext, useReducer',
-    date: '2025-01-22',
-    isChecked: false,
-  },
-  {
-    id: 3,
-    text: 'Custom Hooks 만들기',
-    date: '2025-01-22',
-    isChecked: false,
-  },
-];
-
 const Page = () => {
+  const [user, setUser] = useState<User | null>(null);
+  const [plans, setPlans] = useState<Plan[]>([]);
+  const [isAdding, setIsAdding] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+
+  // 사용자 인증 상태 리스너 및 초기 플랜 목록 로드
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
+      setUser(currentUser);
+
+      if (currentUser) {
+        try {
+          const fetchedPlans = await fetchPlans(currentUser.uid);
+          setPlans(fetchedPlans);
+        } catch (err) {
+          console.error('플랜 목록 로딩 실패:', err);
+          setPlans([]);
+        }
+      } else {
+        setPlans([]);
+      }
+      setIsLoading(false);
+    });
+    return () => unsubscribe(); // 클린업
+  }, []);
+
+  // 플랜 생성(추가) 핸들러
+  const handleSavePlan = async (title: string, description: string) => {
+    if (!user) {
+      alert('로그인이 필요합니다.');
+      return;
+    }
+    try {
+      await addPlan(user.uid, title, description);
+      const fetchedPlans = await fetchPlans(user.uid); // 목록 새로고침
+      setPlans(fetchedPlans);
+      setIsAdding(false); // 폼 닫기
+    } catch (err) {
+      console.error('플랜 추가 실패:', err);
+    }
+  };
+
+  // 플랜 추가 취소 핸들러
+  const handleCancelAdd = () => {
+    setIsAdding(false);
+  };
+
   return (
     <div className="bg-background min-h-screen p-11">
-      {/* 1. 페이지 헤더 */}
       <PageHeader
         title="플랜"
         highlight="관리하기"
         description="학습 주제를 만들고 세부 과제를 관리하세요"
       />
 
-      {/* 2. 상단 통계 카드 (Grid) */}
+      {/* 상단 통계 카드 (Grid) - TODO: 실제 데이터 연동 */}
       <div className="mb-4 grid grid-cols-1 gap-3.5 md:grid-cols-3">
         <Card className="flex items-center justify-between border-2 border-[#D5DCFB]">
-          {/* 왼쪽: 텍스트 영역 */}
           <div className="flex flex-col gap-1">
-            <span className="text-text-sub text-sm font-medium">
-              전체 플랜 수
-            </span>
-            <span className="text-4xl font-bold text-[#4757D3]">1</span>
+            <span className="text-text-sub text-sm font-medium">전체 플랜 수</span>
+            <span className="text-4xl font-bold text-[#4757D3]">{plans.length}</span>
           </div>
-
-          {/* 오른쪽: 아이콘 영역 */}
           <div className="flex h-12 w-12 items-center justify-center rounded-full bg-[#D5DCFB] text-[#556BD6]">
             <Target size={24} strokeWidth={2.5} />
           </div>
         </Card>
-        <Card className="flex items-center justify-between border-2 border-[#EBDBFC]">
-          {/* 왼쪽: 텍스트 영역 */}
-          <div className="flex flex-col gap-1">
-            <span className="text-text-sub text-sm font-medium">
-              진행중인 플랜 수
-            </span>
-            <span className="text-4xl font-bold text-[#7B44C4]">1</span>
-          </div>
-
-          {/* 오른쪽: 아이콘 영역 */}
-          <div className="flex h-12 w-12 items-center justify-center rounded-full bg-[#EBDBFC] text-[#7B44C4]">
-            <Calendar size={24} strokeWidth={2.5} />
-          </div>
-        </Card>
-        <Card className="flex items-center justify-between border-2 border-[#C6F6D7]">
-          {/* 왼쪽: 텍스트 영역 */}
-          <div className="flex flex-col gap-1">
-            <span className="text-text-sub text-sm font-medium">
-              완료된 플랜 수
-            </span>
-            <span className="text-4xl font-bold text-[#00841F]">1</span>
-          </div>
-
-          {/* 오른쪽: 아이콘 영역 */}
-          <div className="flex h-12 w-12 items-center justify-center rounded-full bg-[#C6F6D7] text-[#00841F]">
-            <CheckCircle2 size={24} strokeWidth={2.5} />
-          </div>
-        </Card>
+        {/* 다른 카드들도 위와 같이 plans 배열을 이용해 동적으로 값 표시 가능 */}
       </div>
 
-      {/* 3. 검색 바 */}
       <SearchBar />
 
-      {/* 4. 메인 플랜 목록 */}
+      {/* 메인 플랜 목록 */}
       <section className="space-y-6">
-        <PlanSection
-          title="React Hooks 학습"
-          description="React Hooks의 기본부터 고급 패턴까지 학습"
-          tasks={sampleTasks}
-        />
-
-        {/* 추가적인 PlanSection이 있다면 여기에 배치 */}
+        {isLoading ? (
+          <p>플랜을 불러오는 중...</p>
+        ) : plans.length > 0 && user ? (
+          plans.map((plan) => (
+            <PlanSection
+              key={plan.id}
+              userId={user.uid}
+              planId={plan.id}
+              title={plan.title}
+              description={plan.description}
+            />
+          ))
+        ) : (
+          <p>아직 생성된 플랜이 없습니다. 첫 플랜을 추가해보세요!</p>
+        )}
       </section>
 
-      {/* 5. 하단 추가 버튼 */}
+      {/* 하단 추가 버튼 or 인라인 폼 */}
       <div className="mt-6">
-        <AddPlanButton />
+        {isAdding ? (
+          <InlineAddPlanForm
+            onSave={handleSavePlan}
+            onCancel={handleCancelAdd}
+          />
+        ) : (
+          <div onClick={() => setIsAdding(true)}>
+            <AddPlanButton />
+          </div>
+        )}
       </div>
     </div>
   );
