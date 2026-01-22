@@ -53,12 +53,12 @@ export const fetchPlans = async (uid: string): Promise<Plan[]> => {
   return snapshot.docs.map((doc) => ({
     id: doc.id,
     ...doc.data(),
-    createdAt: doc.data().createdAt.toDate(),
+    createdAt: doc.data().createdAt?.toDate(),
   })) as Plan[];
 };
 
 // 3. 특정 플랜의 모든 하위 항목 가져오기
-export const fecthPlanItems = async (
+export const fetchPlanItems = async (
   uid: string,
   planId: string
 ): Promise<PlanItem[]> => {
@@ -80,7 +80,7 @@ export const fecthPlanItems = async (
       ...data,
       // Firestore Timestamp를 JS Date로 변환
       createdAt: data.createdAt?.toDate(),
-      deadline: data.deadline?.toDate() || undefined,
+      deadline: data.deadline?.toDate(),
     };
   }) as PlanItem[];
 };

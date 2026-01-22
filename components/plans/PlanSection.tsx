@@ -13,7 +13,7 @@ import Card from '../home/Card';
 import TaskItem from './TaskItem';
 import InlineAddTaskForm from './InlineAddTaskForm';
 import {
-  fecthPlanItems,
+  fetchPlanItems,
   toggleItemStatus,
   PlanItem,
   addPlanItem,
@@ -50,7 +50,7 @@ export default function PlanSection({
 
       try {
         setIsTasksLoading(true);
-        const fetchedTasks = await fecthPlanItems(userId, planId);
+        const fetchedTasks = await fetchPlanItems(userId, planId);
         setTasks(fetchedTasks);
       } catch (error) {
         console.error('하위 항목 로딩 실패:', error);
@@ -77,12 +77,12 @@ export default function PlanSection({
       await toggleItemStatus(userId, itemId, currentStatus);
 
       // 데이터 최신화: DB 업데이트 후 목록을 다시 불러옵니다.
-      const updatedTasks = await fecthPlanItems(userId, planId);
+      const updatedTasks = await fetchPlanItems(userId, planId);
       setTasks(updatedTasks);
     } catch (error) {
       console.error('상태 변경 실패:', error);
       // 에러 시 원래대로 돌리거나 다시 불러오기
-      const rolledBackTasks = await fecthPlanItems(userId, planId);
+      const rolledBackTasks = await fetchPlanItems(userId, planId);
       setTasks(rolledBackTasks);
     }
   };
@@ -94,7 +94,7 @@ export default function PlanSection({
       await addPlanItem(userId, planId, text, deadline);
 
       // 데이터 최신화: 추가 후 목록을 다시 불러옵니다.
-      const updatedTasks = await fecthPlanItems(userId, planId);
+      const updatedTasks = await fetchPlanItems(userId, planId);
       setTasks(updatedTasks);
 
       setIsAddingTask(false); // 입력 폼 닫기
