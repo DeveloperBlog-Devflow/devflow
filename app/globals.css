@@ -25,6 +25,8 @@
   --color-border-focus: #7a57ff;
   /* 호버 시 */
   --color-border-hover: #7a57ff;
+  /* 선택 시 (파란색) */
+  --color-border-focus-blue: #4757d3;
 
   /* --- 카드 배경 surface --- */
   /* 기본 카드 배경 */
