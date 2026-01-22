@@ -1,3 +1,5 @@
+'use client'
+
 import type { TilItem } from '@/types/til';
 import TilCard from './TilCard';
 
