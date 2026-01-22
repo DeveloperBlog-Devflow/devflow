@@ -1,46 +1,60 @@
+'use client';
+
+import { useEffect, useState } from 'react';
+
 import PageHeader from '@/components/common/PageHeader';
 import ToolBar from '@/components/tils/ToolBar';
 import TilList from '@/components/tils/TilList';
 
-type DiaryItem = {
-  id: string;
-  title: string;
-  preview: string;
-  createdAt: number;
-};
-
-const MOCK: DiaryItem[] = [
-  {
-    id: '1',
-    title: '우테코 최종 테스트',
-    preview:
-      '우아한테크코스 최종 테스트를 준비하며 잠실 캠퍼스 잠실 캠퍼스 잠실 캠퍼스 잠실 캠퍼스....',
-    createdAt: Date.now() - 1000 * 60 * 60 * 24 * 1,
-  },
-  {
-    id: '2',
-    title: '우테코 최종 테스트',
-    preview:
-      '우아한테크코스 최종 테스트를 준비하며 잠실 캠퍼스 잠실 캠퍼스 잠실 캠퍼스 잠실 캠퍼스....',
-    createdAt: Date.now() - 1000 * 60 * 60 * 24 * 2,
-  },
-  {
-    id: '3',
-    title: '우테코 최종 테스트',
-    preview:
-      '우아한테크코스 최종 테스트를 준비하며 잠실 캠퍼스 잠실 캠퍼스 잠실 캠퍼스 잠실 캠퍼스....',
-    createdAt: Date.now() - 1000 * 60 * 60 * 24 * 3,
-  },
-  //   ...Array.from({ length: 38 }).map((_, i) => ({
-  //     id: `m-${i + 4}`,
-  //     title: `일지 ${i + 4}`,
-  //     preview:
-  //       '내용 미리보기 텍스트입니다. 내용 미리보기 텍스트입니다. 내용 미리보기 텍스트입니다....',
-  //     createdAt: Date.now() - 1000 * 60 * 60 * 2 * (i + 4),
-  //   })),
-];
+import { useAuthUser } from '@/lib/auth/useAuthUser';
+import { fetchTilList } from '@/lib/tils/tilListService';
+import type { TilItem } from '@/types/til';
 
 const Page = () => {
+  const { user, authLoading } = useAuthUser();
+
+  const [items, setItems] = useState<TilItem[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!user) {
+      setItems([]);
+      setLoading(false);
+      return;
+    }
+
+    (async () => {
+      try {
+        setError(null);
+        setLoading(true);
+
+        const list = await fetchTilList(user.uid);
+        setItems(list);
+      } catch (e) {
+        console.error(e);
+        setError('일지 목록을 불러오지 못했습니다.');
+      } finally {
+        setLoading(false);
+      }
+    })();
+  }, [user]);
+
+  if (authLoading) {
+    return (
+      <div className="flex min-h-screen items-center justify-center">
+        <p>로그인 확인 중...</p>
+      </div>
+    );
+  }
+
+  if (!user) {
+    return (
+      <div className="flex min-h-screen items-center justify-center">
+        <p>로그인이 필요합니다.</p>
+      </div>
+    );
+  }
   return (
     <div className="bg-background flex min-h-screen flex-col gap-5 px-30 py-11">
       <PageHeader
@@ -49,7 +63,7 @@ const Page = () => {
         description="작성한 일지를 관리해보세요"
       />
       <ToolBar />
-      <TilList items={MOCK} />
+      <TilList items={items} />
     </div>
   );
 };
