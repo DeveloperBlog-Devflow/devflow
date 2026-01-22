@@ -45,9 +45,9 @@ export default function InlineAddTaskForm({
   };
 
   return (
-    <div className="mb-2 flex items-center gap-3 rounded-xl border-2 border-purple-100 bg-white p-2 pl-4 shadow-sm">
+    <div className="border-border-focus-blue mb-2 flex items-center gap-3 rounded-xl border-2 bg-white p-2 pl-4 shadow-sm">
       {/* 1. 체크박스 자리 (비활성 모양) */}
-      <div className="flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-md border border-gray-200 bg-gray-50">
+      <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-md border border-gray-200 bg-gray-50">
         <Plus size={14} className="text-gray-400" />
       </div>
 
@@ -82,7 +82,7 @@ export default function InlineAddTaskForm({
         <button
           onClick={() => handleSubmit()}
           disabled={!text.trim()}
-          className="rounded-lg p-2 text-purple-600 hover:bg-purple-50 disabled:opacity-50 disabled:hover:bg-transparent"
+          className="text-border-focus-blue rounded-lg p-2 hover:bg-purple-50 disabled:opacity-50 disabled:hover:bg-transparent"
         >
           <span className="text-xs font-bold">추가</span>
         </button>
