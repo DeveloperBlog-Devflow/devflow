@@ -4,6 +4,7 @@ import {
   collection,
   addDoc,
   updateDoc,
+  deleteDoc,
   serverTimestamp,
   Timestamp,
 } from 'firebase/firestore';
@@ -81,4 +82,8 @@ export async function updateTil(
     content,
     updatedAt: serverTimestamp(),
   });
+}
+
+export async function deleteTil(uid: string, tilId: string) {
+  await deleteDoc(doc(db, 'users', uid, 'tils', tilId));
 }

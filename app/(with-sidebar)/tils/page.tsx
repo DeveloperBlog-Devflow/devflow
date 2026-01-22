@@ -8,6 +8,8 @@ import TilList from '@/components/tils/TilList';
 
 import { useAuthUser } from '@/lib/auth/useAuthUser';
 import { fetchTilList } from '@/lib/tils/tilListService';
+import { deleteTil } from '@/services/write/til.service';
+
 import type { TilItem } from '@/types/til';
 
 const Page = () => {
@@ -16,6 +18,14 @@ const Page = () => {
   const [items, setItems] = useState<TilItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
+  const handleDelete = async (id: string) => {
+    if (!user) return;
+
+    await deleteTil(user.uid, id);
+
+    setItems((prev) => prev.filter((item) => item.id !== id));
+  };
 
   useEffect(() => {
     if (!user) {
@@ -70,7 +80,7 @@ const Page = () => {
       {loading ? (
         <p className="text-sm text-slate-400">불러오는 중...</p>
       ) : (
-        <TilList items={items} />
+        <TilList items={items} onDelete={handleDelete} />
       )}
     </div>
   );
