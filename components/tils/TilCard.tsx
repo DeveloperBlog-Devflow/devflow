@@ -2,14 +2,23 @@
 
 import { MoreVertical } from 'lucide-react';
 import type { TilItem } from '@/types/til';
+import { useRouter } from 'next/navigation';
 
 type Props = {
   item: TilItem;
 };
 
 const TilCard = ({ item }: Props) => {
+  const router = useRouter();
+  const onClickCard = async () => {
+    router.push(`/write/${item.id}`);
+  };
+
   return (
-    <article className="relative rounded-3xl border border-black/10 bg-white px-10 py-8">
+    <article
+      className="relative rounded-3xl border border-black/10 bg-white px-10 py-8"
+      onClick={onClickCard}
+    >
       <h3 className="text-xl font-extrabold text-black/70">{item.title}</h3>
 
       <div className="mt-6 space-y-1 text-sm font-semibold text-black/45">

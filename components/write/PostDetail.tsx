@@ -36,7 +36,10 @@ const PostDetail = ({ tilId }: { tilId: string }) => {
   if (!data) return <div className="min-h-screen p-6">글이 없습니다.</div>;
 
   return (
-    <div className="mx-auto min-h-screen max-w-3xl p-6" data-color-mode="light">
+    <div
+      className="m-6 mx-auto min-h-screen max-w-3xl bg-white p-3 shadow-sm"
+      data-color-mode="light"
+    >
       <h1 className="mb-4 text-xl font-semibold">
         {data.title || '제목 없음'}
       </h1>

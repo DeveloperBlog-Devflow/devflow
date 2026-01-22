@@ -62,8 +62,16 @@ const Page = () => {
         highlight="관리하기"
         description="작성한 일지를 관리해보세요"
       />
+
       <ToolBar />
-      <TilList items={items} />
+
+      {error && <p className="text-sm text-red-500">{error}</p>}
+
+      {loading ? (
+        <p className="text-sm text-slate-400">불러오는 중...</p>
+      ) : (
+        <TilList items={items} />
+      )}
     </div>
   );
 };
