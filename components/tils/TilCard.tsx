@@ -1,12 +1,10 @@
 'use client';
 
-import { useState } from 'react';
 import { MoreVertical } from 'lucide-react';
 import type { TilItem } from '@/types/til';
 import { useRouter } from 'next/navigation';
 import { Menu } from '@headlessui/react';
 import { useAuthUser } from '@/lib/auth/useAuthUser';
-import { deleteTil } from '@/services/write/til.service';
 
 type Props = {
   item: TilItem;
@@ -87,9 +85,6 @@ const TilCard = ({ item, onDelete }: Props) => {
               </button>
             )}
           </Menu.Item>
-
-          {/* 필요하면 "목록" 같은 액션 추가 */}
-          {/* <Menu.Item>...</Menu.Item> */}
         </Menu.Items>
       </Menu>
       {/* <button
