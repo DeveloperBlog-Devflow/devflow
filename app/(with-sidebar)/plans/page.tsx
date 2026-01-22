@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { User, onAuthStateChanged } from 'firebase/auth';
 import { auth } from '@/lib/firebase';
-import { addPlan, fetchPlans, Plan } from '@/lib/planManageService';
+import { addPlan, deletePlan, fetchPlans, Plan } from '@/lib/planManageService';
 
 import PageHeader from '@/components/common/PageHeader';
 import Card from '@/components/home/Card';
@@ -48,8 +48,11 @@ const Page = () => {
     }
     try {
       await addPlan(user.uid, title, description);
-      const fetchedPlans = await fetchPlans(user.uid); // 목록 새로고침
+
+      // 목록 새로고침
+      const fetchedPlans = await fetchPlans(user.uid);
       setPlans(fetchedPlans);
+
       setIsAdding(false); // 폼 닫기
     } catch (err) {
       console.error('플랜 추가 실패:', err);
@@ -61,6 +64,30 @@ const Page = () => {
     setIsAdding(false);
   };
 
+  // 플랜 삭제 핸들러
+  const handleDeletePlan = async (planId: string, title: string) => {
+    if (!user) {
+      alert('로그인이 필요합니다.');
+      return;
+    }
+
+    if (
+      confirm(
+        `'${title}' 플랜을 정말 삭제하시겠습니까? 포함된 모든 할 일이 삭제됩니다.`
+      )
+    ) {
+      try {
+        await deletePlan(user.uid, planId);
+
+        // 목록 새로고침
+        const fetchedPlans = await fetchPlans(user.uid);
+        setPlans(fetchedPlans);
+      } catch (err) {
+        console.error(err);
+      }
+    }
+  };
+
   return (
     <div className="bg-background min-h-screen p-11">
       <PageHeader
@@ -69,7 +96,7 @@ const Page = () => {
         description="학습 주제를 만들고 세부 과제를 관리하세요"
       />
 
-      {/* 상단 통계 카드 (Grid) - TODO: 실제 데이터 연동 */}
+      {/* 상단 통계 카드 (Grid) */}
       <div className="mb-4 grid grid-cols-1 gap-3.5 md:grid-cols-3">
         <Card className="flex items-center justify-between border-2 border-[#D5DCFB]">
           {/* 왼쪽: 텍스트 영역 */}
@@ -117,6 +144,7 @@ const Page = () => {
         </Card>
       </div>
 
+      {/* 검색 바 */}
       <SearchBar />
 
       {/* 메인 플랜 목록 */}
@@ -131,6 +159,7 @@ const Page = () => {
               planId={plan.id}
               title={plan.title}
               description={plan.description}
+              onDelete={handleDeletePlan}
             />
           ))
         ) : (

@@ -1,15 +1,23 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { ChevronDown, ChevronUp, Plus } from 'lucide-react';
+import {
+  ChevronDown,
+  ChevronUp,
+  Edit2,
+  MoreVertical,
+  Plus,
+  Trash2,
+} from 'lucide-react';
 import Card from '../home/Card';
 import TaskItem from './TaskItem';
 import InlineAddTaskForm from './InlineAddTaskForm';
 import {
-  fecthPlanItems, // lib/planManageService의 함수명 오타 주의 (fetchPlanItems인지 확인)
+  fecthPlanItems,
   toggleItemStatus,
   PlanItem,
   addPlanItem,
+  deletePlan,
 } from '@/lib/planManageService';
 
 interface PlanSectionProps {
@@ -17,6 +25,7 @@ interface PlanSectionProps {
   planId: string;
   title: string;
   description?: string;
+  onDelete: (planId: string, title: string) => void;
 }
 
 export default function PlanSection({
@@ -24,14 +33,16 @@ export default function PlanSection({
   planId,
   title,
   description,
+  onDelete,
 }: PlanSectionProps) {
   const [isOpen, setIsOpen] = useState(true);
   const [tasks, setTasks] = useState<PlanItem[]>([]);
   const [isTasksLoading, setIsTasksLoading] = useState(true);
   const [isAddingTask, setIsAddingTask] = useState(false);
 
-  // 1. 초기 데이터 로드 (Page.tsx와 동일한 패턴)
-  // useEffect 안에서 로직을 직접 수행합니다.
+  const [showMenu, setShowMenu] = useState(false);
+
+  // 1. 초기 데이터 로드
   useEffect(() => {
     const loadInitialTasks = async () => {
       // userId나 planId가 없으면 로드하지 않음
@@ -76,7 +87,7 @@ export default function PlanSection({
     }
   };
 
-  // 3. 하위 항목 추가 저장 핸들러
+  // 3. 하위 항목 추가 핸들러
   const handleSaveTask = async (text: string, deadline?: Date) => {
     try {
       // DB에 추가
@@ -90,6 +101,15 @@ export default function PlanSection({
     } catch (error) {
       console.error('하위 항목 추가 실패:', error);
     }
+  };
+
+  //
+  const handleDeleteClick = (e: React.MouseEvent) => {
+    e.stopPropagation(); // 카드 열림/닫힘 방지
+
+    onDelete(planId, title);
+
+    setShowMenu(false);
   };
 
   // 완료된 할 일 개수 계산
@@ -115,6 +135,39 @@ export default function PlanSection({
               {completedCount}/{totalCount}
             </span>
           </div>
+          <div className="relative z-10">
+            <button
+              onClick={(e) => {
+                e.stopPropagation(); // 부모 클릭(아코디언 토글) 방지
+                setShowMenu(!showMenu);
+              }}
+              className="rounded-full p-1 text-gray-400 transition-colors hover:bg-gray-100"
+            >
+              <MoreVertical size={20} />
+            </button>
+
+            {/* 드롭다운 메뉴 (절대 위치) */}
+            {showMenu && (
+              <div className="absolute top-8 right-0 w-32 overflow-hidden rounded-lg border border-gray-100 bg-white py-1 shadow-lg">
+                <button
+                  className="flex w-full items-center gap-2 px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-50"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    alert('수정 기능');
+                  }}
+                >
+                  <Edit2 size={14} /> 수정
+                </button>
+                <button
+                  className="flex w-full items-center gap-2 px-4 py-2 text-left text-sm text-red-600 hover:bg-red-50"
+                  onClick={handleDeleteClick}
+                >
+                  <Trash2 size={14} /> 삭제
+                </button>
+              </div>
+            )}
+          </div>
+
           <button className="text-gray-400 hover:text-gray-600">
             {isOpen ? <ChevronUp size={24} /> : <ChevronDown size={24} />}
           </button>
