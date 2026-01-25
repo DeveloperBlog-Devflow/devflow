@@ -8,7 +8,7 @@ import {
   Timestamp,
   updateDoc,
 } from 'firebase/firestore';
-import { db } from '../firebase';
+import { db } from '@/lib/firebase';
 
 // 할 일 데이터 타입
 export interface Todo {

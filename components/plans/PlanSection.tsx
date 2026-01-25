@@ -18,7 +18,7 @@ import {
   PlanItem,
   addPlanItem,
   deletePlanItem,
-} from '@/lib/planManageService';
+} from '@/services/plans/planManageService.service';
 
 interface PlanSectionProps {
   userId: string;

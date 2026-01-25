@@ -11,7 +11,7 @@ import {
   where,
   writeBatch,
 } from 'firebase/firestore';
-import { db } from './firebase';
+import { db } from '@/lib/firebase';
 
 // 플랜 데이터 타입
 export interface Plan {

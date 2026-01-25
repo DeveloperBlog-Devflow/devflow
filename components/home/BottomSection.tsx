@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import Card from './Card';
 import CheckList from './CheckList';
-import { Todo } from '@/lib/home/todoService';
+import { Todo } from '@/services/home/todoService.service';
 
 interface BottomSectionProps {
   className?: string;
