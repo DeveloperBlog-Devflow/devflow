@@ -15,7 +15,6 @@ export default function SidebarLayout({
 
   if (loading) return <div>로딩중...</div>;
   if (!isAuthed) {
-    alert('로그인이 필요합니다.');
     return null;
   }
 

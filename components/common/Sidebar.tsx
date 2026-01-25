@@ -26,6 +26,8 @@ const Sidebar = () => {
   const handleLogout = async (): Promise<void> => {
     try {
       await signOut(auth);
+      document.cookie =
+        'isLoggedIn=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';
       alert('로그아웃 되었습니다.');
       router.replace('/landing');
     } catch (err) {

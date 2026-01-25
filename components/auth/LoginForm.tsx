@@ -22,12 +22,19 @@ const LoginForm = ({ handleOpenModal }: LoginFormProps) => {
 
   const router = useRouter();
 
+  // 쿠키 설정 헬퍼 함수
+  const setLoginCookie = () => {
+    // 7일간 유지되는 쿠키 설정
+    document.cookie = 'isLoggedIn=true; path=/; max-age=' + 60 * 60 * 24 * 7;
+  };
+
   const handleGithubLogin = async () => {
     if (isLoading) return;
     setIsLoading(true);
     setError('');
     try {
       await signupWithGithub();
+      setLoginCookie(); // 쿠키 설정
       router.push('/');
     } catch (err: unknown) {
       setError('Github 로그인에 실패했습니다.');
@@ -58,6 +65,7 @@ const LoginForm = ({ handleOpenModal }: LoginFormProps) => {
         password
       );
       // console.log('로그인 성공!', userCredential.user);
+      setLoginCookie(); // 쿠키 설정
       router.push('/');
     } catch (err) {
       // console.error('로그인 에러:', err);
