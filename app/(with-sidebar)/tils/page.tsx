@@ -18,6 +18,8 @@ const Page = () => {
   const [items, setItems] = useState<TilItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [sort, setSort] = useState<'latest' | 'oldest'>('latest');
+  const [sortedItems, setSortedItems] = useState<TilItem[]>([]);
 
   const handleDelete = async (id: string) => {
     if (!user) return;
@@ -27,6 +29,11 @@ const Page = () => {
     setItems((prev) => prev.filter((item) => item.id !== id));
   };
 
+  const handleSortChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setSort(e.target.value as 'latest' | 'oldest');
+  };
+
+  // 데이터 가져오기
   useEffect(() => {
     if (!user) {
       setItems([]);
@@ -34,11 +41,10 @@ const Page = () => {
       return;
     }
 
-    (async () => {
+    const loadData = async () => {
       try {
         setError(null);
         setLoading(true);
-
         const list = await fetchTilList(user.uid);
         setItems(list);
       } catch (e) {
@@ -47,8 +53,20 @@ const Page = () => {
       } finally {
         setLoading(false);
       }
-    })();
+    };
+
+    loadData();
   }, [user]);
+
+  // 정렬 처리
+  useEffect(() => {
+    const sorted = [...items].sort((a, b) => {
+      return sort === 'latest'
+        ? b.createdAt - a.createdAt
+        : a.createdAt - b.createdAt;
+    });
+    setSortedItems(sorted);
+  }, [items, sort]);
 
   if (authLoading) {
     return (
@@ -73,14 +91,14 @@ const Page = () => {
         description="작성한 일지를 관리해보세요"
       />
 
-      <ToolBar items={items} />
+      <ToolBar items={sortedItems} onChangeSort={handleSortChange} />
 
       {error && <p className="text-sm text-red-500">{error}</p>}
 
       {loading ? (
         <p className="text-sm text-slate-400">불러오는 중...</p>
       ) : (
-        <TilList items={items} onDelete={handleDelete} />
+        <TilList items={sortedItems} onDelete={handleDelete} />
       )}
     </div>
   );

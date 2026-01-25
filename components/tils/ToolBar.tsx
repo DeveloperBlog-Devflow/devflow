@@ -5,9 +5,10 @@ import type { TilItem } from '@/types/til';
 
 type Props = {
   items: TilItem[];
+  onChangeSort: (e: React.ChangeEvent<HTMLSelectElement>) => void;
 };
 
-const ToolBar = ({ items }: Props) => {
+const ToolBar = ({ items, onChangeSort }: Props) => {
   return (
     <div>
       {/* SearchBar */}
@@ -26,7 +27,10 @@ const ToolBar = ({ items }: Props) => {
         </span>
 
         <div className="relative">
-          <select className="appearance-none rounded-md border border-black/30 bg-white px-4 py-2 pr-10 text-sm font-medium shadow-sm outline-none">
+          <select
+            className="appearance-none rounded-md border border-black/30 bg-white px-4 py-2 pr-10 text-sm font-medium shadow-sm outline-none"
+            onChange={onChangeSort}
+          >
             <option value="latest">최신순</option>
             <option value="oldest">오래된순</option>
           </select>
