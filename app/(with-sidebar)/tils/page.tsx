@@ -21,17 +21,7 @@ const Page = () => {
   const [sort, setSort] = useState<'latest' | 'oldest'>('latest');
   const [sortedItems, setSortedItems] = useState<TilItem[]>([]);
 
-  const handleDelete = async (id: string) => {
-    if (!user) return;
-
-    await deleteTil(user.uid, id);
-
-    setItems((prev) => prev.filter((item) => item.id !== id));
-  };
-
-  const handleSortChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    setSort(e.target.value as 'latest' | 'oldest');
-  };
+  const [searchTerm, setSearchTerm] = useState('');
 
   // 데이터 가져오기
   useEffect(() => {
@@ -60,13 +50,35 @@ const Page = () => {
 
   // 정렬 처리
   useEffect(() => {
-    const sorted = [...items].sort((a, b) => {
+    const filtered = items.filter((item) =>
+      // 제목에서 검색어 포함 여부 확인
+      item.title.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+
+    // 필터링된 결과를 정렬
+    const sorted = filtered.sort((a, b) => {
       return sort === 'latest'
         ? b.createdAt - a.createdAt
         : a.createdAt - b.createdAt;
     });
     setSortedItems(sorted);
-  }, [items, sort]);
+  }, [items, sort, searchTerm]);
+
+  const handleDelete = async (id: string) => {
+    if (!user) return;
+
+    await deleteTil(user.uid, id);
+
+    setItems((prev) => prev.filter((item) => item.id !== id));
+  };
+
+  const handleSortChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setSort(e.target.value as 'latest' | 'oldest');
+  };
+
+  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchTerm(e.target.value);
+  };
 
   if (authLoading) {
     return (
@@ -91,7 +103,12 @@ const Page = () => {
         description="작성한 일지를 관리해보세요"
       />
 
-      <ToolBar items={sortedItems} onChangeSort={handleSortChange} />
+      <ToolBar
+        items={sortedItems}
+        onChangeSort={handleSortChange}
+        searchTerm={searchTerm}
+        onSearch={handleSearch}
+      />
 
       {error && <p className="text-sm text-red-500">{error}</p>}
 
