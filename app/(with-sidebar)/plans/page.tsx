@@ -99,7 +99,7 @@ const Page = () => {
       <PageHeader
         title="플랜"
         highlight="관리하기"
-        description="학습 주제를 만들고 세부 과제를 관리하세요"
+        description="학습 주제를 만들고 세부 과제를 관리해보세요"
       />
 
       {/* 상단 통계 카드 (Grid) */}

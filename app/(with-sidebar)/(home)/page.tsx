@@ -7,6 +7,7 @@ import ProfileSection from '@/components/home/ProfileSection';
 import ButtonSection from '@/components/home/ButtonSection';
 
 import { useEffect, useState } from 'react';
+import { useAuthUser } from '@/lib/auth/useAuthUser';
 
 import {
   Todo,
@@ -16,17 +17,13 @@ import {
 } from '@/lib/home/todoService';
 import { getProfile, Profile } from '@/lib/home/profileService';
 
-import { User, onAuthStateChanged } from 'firebase/auth';
-import { auth } from '@/lib/firebase';
-
 const Page = () => {
+  // 현재 사용자 정보
+  const { user: currentUser, authLoading } = useAuthUser();
+
   const [profile, setProfile] = useState<Profile | null>(null);
   const [todos, setTodos] = useState<Todo[]>([]);
-
   const [error, setError] = useState<string | null>(null);
-
-  // 현재 사용자 정보
-  const [currentUser, setCurrentUser] = useState<User | null>(null);
 
   // 1. 할 일 목록 불러오기
   const loadTodos = async (uid: string) => {
@@ -41,25 +38,9 @@ const Page = () => {
     }
   };
 
-  // 2. 할 일 추가
-  const handleAddTodo = async (text: string) => {
-    if (!currentUser) return;
-
-    try {
-      setError(null);
-
-      await AddTodo(currentUser.uid, text);
-      await loadTodos(currentUser.uid);
-    } catch (err) {
-      console.error(err);
-      setError('할 일을 추가하는 데 실패하였습니다');
-    }
-  };
-
   // 3. 할 일 상태 토글
   const handleToggleTodo = async (id: string, currentStatus: boolean) => {
     if (!currentUser) return;
-
     try {
       setError(null);
 
@@ -71,34 +52,29 @@ const Page = () => {
     }
   };
 
-  // 사용자 로그인 상태 감지
-  useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      setCurrentUser(user);
-    });
-
-    return () => unsubscribe();
-  }, []);
-
   // 사용자가 존재하면 데이터 불러옴
   useEffect(() => {
-    if (currentUser) {
-      const loadData = async () => {
-        try {
-          const userProfile = await getProfile(currentUser.uid);
-          setProfile(userProfile);
-          await loadTodos(currentUser.uid);
-        } catch (err) {
-          console.error(err);
-          setError('프로필 정보를 불러오는 데 실패하였습니다');
-        }
-      };
-      loadData();
-    } else {
-      setTodos([]);
-      setProfile(null);
-    }
+    if (!currentUser) return;
+    (async () => {
+      try {
+        const userProfile = await getProfile(currentUser.uid);
+        setProfile(userProfile);
+        await loadTodos(currentUser.uid);
+      } catch (err) {
+        console.error(err);
+        setError('프로필 정보를 불러오는 데 실패하였습니다');
+      }
+    })();
   }, [currentUser]);
+
+  // 유저 정보 로딩 처리
+  if (authLoading) {
+    return (
+      <div className="flex min-h-screen items-center justify-center">
+        <p>로그인 확인 중...</p>
+      </div>
+    );
+  }
 
   // 유저 정보가 없을 시
   if (!currentUser) {
@@ -133,7 +109,7 @@ const Page = () => {
       />
 
       {/* 3. ButtonSection */}
-      <ButtonSection onAddTodo={handleAddTodo} />
+      <ButtonSection />
     </div>
   );
 };

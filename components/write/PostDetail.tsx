@@ -15,7 +15,6 @@ const Markdown = dynamic(
 const PostDetail = ({ tilId }: { tilId: string }) => {
   const router = useRouter();
   const [data, setData] = useState<Til | null>(null);
-  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const unsub = auth.onAuthStateChanged(async (user) => {
@@ -26,17 +25,18 @@ const PostDetail = ({ tilId }: { tilId: string }) => {
 
       const post = await fetchMyTil(user.uid, tilId);
       setData(post);
-      setLoading(false);
     });
 
     return () => unsub();
   }, [tilId, router]);
 
-  if (loading) return <div className="min-h-screen p-6">로딩중...</div>;
   if (!data) return <div className="min-h-screen p-6">글이 없습니다.</div>;
 
   return (
-    <div className="mx-auto min-h-screen max-w-3xl p-6" data-color-mode="light">
+    <div
+      className="m-6 mx-auto min-h-screen max-w-3xl bg-white p-3 shadow-sm"
+      data-color-mode="light"
+    >
       <h1 className="mb-4 text-xl font-semibold">
         {data.title || '제목 없음'}
       </h1>

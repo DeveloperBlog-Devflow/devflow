@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@radix-ui/react-popover": "^1.1.15",
+    "@headlessui/react": "^2.2.9",
     "@uiw/react-md-editor": "^4.0.11",
     "clsx": "^2.1.1",
     "date-fns": "^4.1.0",
