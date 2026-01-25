@@ -1,8 +1,13 @@
 'use client';
 
 import { ChevronDown } from 'lucide-react';
+import type { TilItem } from '@/types/til';
 
-const ToolBar = () => {
+type Props = {
+  items: TilItem[];
+};
+
+const ToolBar = ({ items }: Props) => {
   return (
     <div>
       {/* SearchBar */}
@@ -16,7 +21,7 @@ const ToolBar = () => {
       {/* Result + Sort */}
       <div className="mt-10 flex items-center justify-between">
         <span className="text-primary text-sm font-bold">
-          1건
+          {items.length}건
           <span className="test-sm text-text-sub font-medium">의 검색결과</span>
         </span>
 
