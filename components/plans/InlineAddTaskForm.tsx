@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { Calendar, Plus, X } from 'lucide-react';
+import DatePicker from './DatePicker';
 
 interface InlineAddTaskFormProps {
   onSave: (text: string, date?: Date) => Promise<void>; // 저장 핸들러
@@ -15,8 +16,7 @@ export default function InlineAddTaskForm({
   const [text, setText] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // 날짜 라이브러리를 붙일 예정이므로 지금은 임시 상태
-  const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined);
+  const [deadline, setDeadline] = useState<Date | undefined>();
 
   const handleSubmit = async (e?: React.FormEvent) => {
     e?.preventDefault();
@@ -25,7 +25,7 @@ export default function InlineAddTaskForm({
     setIsSubmitting(true);
 
     try {
-      await onSave(text, selectedDate);
+      await onSave(text, deadline);
       setText(''); // 저장 후 초기화
       onCancel(); // 저장 후 닫기
     } catch (error) {
@@ -45,7 +45,7 @@ export default function InlineAddTaskForm({
   };
 
   return (
-    <div className="border-border-focus-blue mb-2 flex items-center gap-3 rounded-xl border-2 bg-white p-2 pl-4 shadow-sm">
+    <div className="mt-2 mb-2 flex items-center gap-3 rounded-xl border-2 border-[#D5DCFB] bg-white p-2 pl-4 shadow-sm">
       {/* 1. 체크박스 자리 (비활성 모양) */}
       <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-md border border-gray-200 bg-gray-50">
         <Plus size={14} className="text-gray-400" />
@@ -66,14 +66,7 @@ export default function InlineAddTaskForm({
 
         {/* 3. 마감일 버튼 (요청하신 부분) */}
         <div className="flex items-center">
-          <button
-            type="button"
-            className="flex items-center gap-1.5 rounded-md bg-gray-100 px-2 py-1 text-xs text-gray-600 transition-colors hover:bg-gray-200"
-            onClick={() => alert('나중에 달력 라이브러리 연결될 곳!')}
-          >
-            <Calendar size={12} />
-            {selectedDate ? selectedDate.toLocaleDateString() : '마감일 설정'}
-          </button>
+          <DatePicker date={deadline} setDate={setDeadline} />
         </div>
       </div>
 

@@ -3,7 +3,13 @@
 import { useState, useEffect } from 'react';
 import { User, onAuthStateChanged } from 'firebase/auth';
 import { auth } from '@/lib/firebase';
-import { addPlan, deletePlan, fetchPlans, Plan } from '@/lib/planManageService';
+import {
+  addPlan,
+  deletePlan,
+  deletePlanItem,
+  fetchPlans,
+  Plan,
+} from '@/lib/planManageService';
 
 import PageHeader from '@/components/common/PageHeader';
 import Card from '@/components/home/Card';
@@ -147,39 +153,42 @@ const Page = () => {
       {/* 검색 바 */}
       <SearchBar />
 
-      {/* 메인 플랜 목록 */}
-      <section className="space-y-6">
-        {isLoading ? (
-          <p>플랜을 불러오는 중...</p>
-        ) : plans.length > 0 && user ? (
-          plans.map((plan) => (
-            <PlanSection
-              key={plan.id}
-              userId={user.uid}
-              planId={plan.id}
-              title={plan.title}
-              description={plan.description}
-              onDelete={handleDeletePlan}
-            />
-          ))
-        ) : (
-          <p>아직 생성된 플랜이 없습니다. 첫 플랜을 추가해보세요!</p>
-        )}
-      </section>
+      {isLoading ? (
+        <p>플랜을 불러오는 중...</p>
+      ) : (
+        <div>
+          <section className="space-y-6">
+            {plans.length > 0 && user ? (
+              plans.map((plan) => (
+                <PlanSection
+                  key={plan.id}
+                  userId={user.uid}
+                  planId={plan.id}
+                  title={plan.title}
+                  description={plan.description}
+                  onDeletePlan={handleDeletePlan}
+                />
+              ))
+            ) : (
+              <p>아직 생성된 플랜이 없습니다. 첫 플랜을 추가해보세요!</p>
+            )}
+          </section>
 
-      {/* 하단 추가 버튼 or 인라인 폼 */}
-      <div className="mt-6">
-        {isAdding ? (
-          <InlineAddPlanForm
-            onSave={handleSavePlan}
-            onCancel={handleCancelAdd}
-          />
-        ) : (
-          <div onClick={() => setIsAdding(true)}>
-            <AddPlanButton />
+          {/* 하단 추가 버튼 or 인라인 폼 */}
+          <div className="mt-6">
+            {isAdding ? (
+              <InlineAddPlanForm
+                onSave={handleSavePlan}
+                onCancel={handleCancelAdd}
+              />
+            ) : (
+              <div onClick={() => setIsAdding(true)}>
+                <AddPlanButton />
+              </div>
+            )}
           </div>
-        )}
-      </div>
+        </div>
+      )}
     </div>
   );
 };
