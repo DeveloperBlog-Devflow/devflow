@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import {
   ChevronDown,
   ChevronUp,
@@ -42,6 +42,8 @@ export default function PlanSection({
 
   const [showMenu, setShowMenu] = useState(false);
 
+  const menuRef = useRef<HTMLDivElement>(null);
+
   // 1. 초기 데이터 로드
   useEffect(() => {
     const loadInitialTasks = async () => {
@@ -59,9 +61,28 @@ export default function PlanSection({
         setIsTasksLoading(false);
       }
     };
-
     loadInitialTasks();
   }, [userId, planId]); // userId나 planId가 바뀔 때만 실행됨
+
+  // 1-2. 마우스 클릭 감지
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      // 메뉴가 열려있고, 클릭된 요소가 menuRef 내부가 아니라면 닫기
+      if (
+        showMenu &&
+        menuRef.current &&
+        !menuRef.current.contains(event.target as Node)
+      ) {
+        setShowMenu(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+
+    // 언마운트 시 제거
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [showMenu]);
 
   // 2. 하위 항목 상태(완료/미완료) 토글 핸들러
   const handleToggleTask = async (itemId: string, currentStatus: boolean) => {
@@ -141,7 +162,7 @@ export default function PlanSection({
               {completedCount}/{totalCount}
             </span>
           </div>
-          <div className="relative z-10">
+          <div className="relative z-10" ref={menuRef}>
             <button
               onClick={(e) => {
                 e.stopPropagation(); // 부모 클릭(아코디언 토글) 방지
