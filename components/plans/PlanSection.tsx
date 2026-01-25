@@ -215,7 +215,7 @@ export default function PlanSection({
           ) : (
             <button
               onClick={() => setIsAddingTask(true)}
-              className="mt-2 flex w-full items-center justify-center gap-1 rounded-xl border-2 border-dashed border-[#556BD6]/30 py-3 text-sm font-medium text-[#556BD6] transition-colors hover:bg-[#556BD6]/5"
+              className="mt-2 flex w-full items-center justify-center gap-2 rounded-xl border-2 border-dashed border-[#556BD6]/30 py-3 text-sm font-medium text-[#556BD6] transition-colors hover:bg-[#556BD6]/5"
             >
               <Plus size={16} /> 새 하위항목 추가
             </button>
