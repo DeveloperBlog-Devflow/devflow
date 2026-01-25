@@ -17,6 +17,7 @@ const ToolBar = ({ items, onChangeSort, searchTerm, onSearch }: Props) => {
       <div className="rounded-2xl border-2 border-[#C9D0FF] bg-white/40 px-6 py-4">
         <input
           placeholder="검색어를 입력하세요"
+          aria-label="검색어"
           className="max-w-full bg-transparent text-lg font-semibold text-black/70 outline-none placeholder:text-black/35"
           value={searchTerm}
           onChange={onSearch}
@@ -27,13 +28,14 @@ const ToolBar = ({ items, onChangeSort, searchTerm, onSearch }: Props) => {
       <div className="mt-10 flex items-center justify-between">
         <span className="text-primary text-sm font-bold">
           {items.length}건
-          <span className="test-sm text-text-sub font-medium">의 검색결과</span>
+          <span className="text-text-sub text-sm font-medium">의 검색결과</span>
         </span>
 
         <div className="relative">
           <select
             className="appearance-none rounded-md border border-black/30 bg-white px-4 py-2 pr-10 text-sm font-medium shadow-sm outline-none"
             onChange={onChangeSort}
+            aria-label="정렬 기준"
           >
             <option value="latest">최신순</option>
             <option value="oldest">오래된순</option>
