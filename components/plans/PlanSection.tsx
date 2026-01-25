@@ -17,7 +17,7 @@ import {
   toggleItemStatus,
   PlanItem,
   addPlanItem,
-  deletePlan,
+  deletePlanItem,
 } from '@/lib/planManageService';
 
 interface PlanSectionProps {
@@ -25,7 +25,7 @@ interface PlanSectionProps {
   planId: string;
   title: string;
   description?: string;
-  onDelete: (planId: string, title: string) => void;
+  onDeletePlan: (planId: string, title: string) => void;
 }
 
 export default function PlanSection({
@@ -33,14 +33,14 @@ export default function PlanSection({
   planId,
   title,
   description,
-  onDelete,
+  onDeletePlan,
 }: PlanSectionProps) {
   const [isOpen, setIsOpen] = useState(true);
   const [tasks, setTasks] = useState<PlanItem[]>([]);
   const [isTasksLoading, setIsTasksLoading] = useState(true);
   const [isAddingTask, setIsAddingTask] = useState(false);
 
-  const [showMenu, setShowMenu] = useState(false);
+  const [showPlanMenu, setShowPlanMenu] = useState(false);
 
   const menuRef = useRef<HTMLDivElement>(null);
 
@@ -69,11 +69,11 @@ export default function PlanSection({
     const handleClickOutside = (event: MouseEvent) => {
       // 메뉴가 열려있고, 클릭된 요소가 menuRef 내부가 아니라면 닫기
       if (
-        showMenu &&
+        showPlanMenu &&
         menuRef.current &&
         !menuRef.current.contains(event.target as Node)
       ) {
-        setShowMenu(false);
+        setShowPlanMenu(false);
       }
     };
     document.addEventListener('mousedown', handleClickOutside);
@@ -82,7 +82,7 @@ export default function PlanSection({
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
-  }, [showMenu]);
+  }, [showPlanMenu]);
 
   // 2. 하위 항목 상태(완료/미완료) 토글 핸들러
   const handleToggleTask = async (itemId: string, currentStatus: boolean) => {
@@ -101,7 +101,7 @@ export default function PlanSection({
       const updatedTasks = await fetchPlanItems(userId, planId);
       setTasks(updatedTasks);
     } catch (error) {
-      console.error('상태 변경 실패:', error);
+      console.error('상태 변경 실패: ', error);
       // 에러 시 원래대로 돌리거나 다시 불러오기
       const rolledBackTasks = await fetchPlanItems(userId, planId);
       setTasks(rolledBackTasks);
@@ -120,17 +120,32 @@ export default function PlanSection({
 
       setIsAddingTask(false); // 입력 폼 닫기
     } catch (error) {
-      console.error('하위 항목 추가 실패:', error);
+      console.error('하위 항목 추가 실패: ', error);
     }
   };
 
-  //
-  const handleDeleteClick = (e: React.MouseEvent) => {
+  // 4. 플랜 삭제 핸들러
+  const handleDeletePlan = (e: React.MouseEvent) => {
     e.stopPropagation(); // 카드 열림/닫힘 방지
 
-    onDelete(planId, title);
+    onDeletePlan(planId, title);
 
-    setShowMenu(false);
+    setShowPlanMenu(false);
+  };
+
+  // 5. 하위 항목 삭제 핸들러
+  const handleDeletePlanItem = async (itemId: string, title: string) => {
+    if (confirm(`'${title}' 하위 항목을 정말 삭제하시겠습니까?`)) {
+      try {
+        await deletePlanItem(userId, itemId);
+
+        // 목록 새로고침
+        const fetchedPlanItems = await fetchPlanItems(userId, planId);
+        setTasks(fetchedPlanItems);
+      } catch (err) {
+        console.error(err);
+      }
+    }
   };
 
   // 완료된 할 일 개수 계산
@@ -140,7 +155,7 @@ export default function PlanSection({
   // isOpen 상태 false 시 포커스 초기화
   useEffect(() => {
     setIsAddingTask(false); //
-    setShowMenu(false); // 드롭다운 메뉴
+    setShowPlanMenu(false); // 드롭다운 메뉴
   }, [isOpen]);
 
   return (
@@ -166,7 +181,7 @@ export default function PlanSection({
             <button
               onClick={(e) => {
                 e.stopPropagation(); // 부모 클릭(아코디언 토글) 방지
-                setShowMenu(!showMenu);
+                setShowPlanMenu(!showPlanMenu);
               }}
               className="rounded-full p-1 text-gray-400 transition-colors hover:bg-gray-100"
             >
@@ -174,20 +189,20 @@ export default function PlanSection({
             </button>
 
             {/* 드롭다운 메뉴 (절대 위치) */}
-            {showMenu && (
+            {showPlanMenu && (
               <div className="absolute top-8 right-0 w-32 overflow-hidden rounded-lg border border-gray-100 bg-white py-1 shadow-lg">
                 <button
                   className="flex w-full items-center gap-2 px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-50"
                   onClick={(e) => {
                     e.stopPropagation();
-                    alert('수정 기능');
+                    alert('플랜 수정 기능');
                   }}
                 >
                   <Edit2 size={14} /> 수정
                 </button>
                 <button
                   className="flex w-full items-center gap-2 px-4 py-2 text-left text-sm text-red-600 hover:bg-red-50"
-                  onClick={handleDeleteClick}
+                  onClick={handleDeletePlan}
                 >
                   <Trash2 size={14} /> 삭제
                 </button>
@@ -222,6 +237,7 @@ export default function PlanSection({
                   deadline={task.deadline}
                   isCompleted={task.isChecked}
                   onToggle={handleToggleTask}
+                  onDelete={handleDeletePlanItem}
                 />
               ))
             )}

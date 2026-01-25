@@ -3,7 +3,13 @@
 import { useState, useEffect } from 'react';
 import { User, onAuthStateChanged } from 'firebase/auth';
 import { auth } from '@/lib/firebase';
-import { addPlan, deletePlan, fetchPlans, Plan } from '@/lib/planManageService';
+import {
+  addPlan,
+  deletePlan,
+  deletePlanItem,
+  fetchPlans,
+  Plan,
+} from '@/lib/planManageService';
 
 import PageHeader from '@/components/common/PageHeader';
 import Card from '@/components/home/Card';
@@ -160,7 +166,7 @@ const Page = () => {
                   planId={plan.id}
                   title={plan.title}
                   description={plan.description}
-                  onDelete={handleDeletePlan}
+                  onDeletePlan={handleDeletePlan}
                 />
               ))
             ) : (
