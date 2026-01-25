@@ -6,9 +6,11 @@ import type { TilItem } from '@/types/til';
 type Props = {
   items: TilItem[];
   onChangeSort: (e: React.ChangeEvent<HTMLSelectElement>) => void;
+  searchTerm: string;
+  onSearch: (e: React.ChangeEvent<HTMLInputElement>) => void;
 };
 
-const ToolBar = ({ items, onChangeSort }: Props) => {
+const ToolBar = ({ items, onChangeSort, searchTerm, onSearch }: Props) => {
   return (
     <div>
       {/* SearchBar */}
@@ -16,6 +18,8 @@ const ToolBar = ({ items, onChangeSort }: Props) => {
         <input
           placeholder="검색어를 입력하세요"
           className="max-w-full bg-transparent text-lg font-semibold text-black/70 outline-none placeholder:text-black/35"
+          value={searchTerm}
+          onChange={onSearch}
         />
       </div>
 
