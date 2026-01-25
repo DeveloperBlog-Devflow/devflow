@@ -1,4 +1,4 @@
-import { Profile } from '@/lib/home/profileService';
+import { Profile } from '@/services/home/profileService.service';
 import Card from './Card';
 import { getRandomProfileIcon } from '@/utils/getRandomProfileIcon';
 interface ProfileSectionProps {

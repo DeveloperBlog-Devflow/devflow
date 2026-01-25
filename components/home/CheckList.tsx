@@ -1,6 +1,6 @@
 'use client';
 
-import { Todo } from '@/lib/home/todoService';
+import { Todo } from '@/services/home/todoService.service';
 import { CheckItem } from './CheckItem';
 
 // export type ChecklistItem = {

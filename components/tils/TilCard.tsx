@@ -4,7 +4,7 @@ import { MoreVertical } from 'lucide-react';
 import type { TilItem } from '@/types/til';
 import { useRouter } from 'next/navigation';
 import { Menu } from '@headlessui/react';
-import { useAuthUser } from '@/lib/auth/useAuthUser';
+import { useAuthUser } from '@/hooks/useAuthUser';
 
 type Props = {
   item: TilItem;

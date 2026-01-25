@@ -9,7 +9,7 @@ import {
   deletePlanItem,
   fetchPlans,
   Plan,
-} from '@/lib/planManageService';
+} from '@/services/plans/planManageService.service';
 
 import PageHeader from '@/components/common/PageHeader';
 import Card from '@/components/home/Card';

@@ -6,8 +6,8 @@ import PageHeader from '@/components/common/PageHeader';
 import ToolBar from '@/components/tils/ToolBar';
 import TilList from '@/components/tils/TilList';
 
-import { useAuthUser } from '@/lib/auth/useAuthUser';
-import { fetchTilList } from '@/lib/tils/tilListService';
+import { useAuthUser } from '@/hooks/useAuthUser';
+import { fetchTilList } from '@/services/tils/tilListService.service';
 import { deleteTil } from '@/services/write/til.service';
 
 import type { TilItem } from '@/types/til';

@@ -7,15 +7,15 @@ import ProfileSection from '@/components/home/ProfileSection';
 import ButtonSection from '@/components/home/ButtonSection';
 
 import { useEffect, useState } from 'react';
-import { useAuthUser } from '@/lib/auth/useAuthUser';
+import { useAuthUser } from '@/hooks/useAuthUser';
 
 import {
   Todo,
   fetchTodos,
   AddTodo,
   toggleTodoStatus,
-} from '@/lib/home/todoService';
-import { getProfile, Profile } from '@/lib/home/profileService';
+} from '@/services/home/todoService.service';
+import { getProfile, Profile } from '@/services/home/profileService.service';
 
 const Page = () => {
   // 현재 사용자 정보
