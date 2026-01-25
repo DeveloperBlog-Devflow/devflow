@@ -73,7 +73,7 @@ const Page = () => {
         description="작성한 일지를 관리해보세요"
       />
 
-      <ToolBar />
+      <ToolBar items={items} />
 
       {error && <p className="text-sm text-red-500">{error}</p>}
 
