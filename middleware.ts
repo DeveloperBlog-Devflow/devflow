@@ -19,6 +19,8 @@ export function middleware(request: NextRequest) {
   if (pathname === '/landing' && isLoggedIn) {
     return NextResponse.redirect(new URL('/', request.url));
   }
+
+  return NextResponse.next();
 }
 
 export const config = {
