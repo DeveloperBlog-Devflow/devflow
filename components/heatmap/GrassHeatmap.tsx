@@ -3,26 +3,21 @@
 import { useEffect, useMemo, useState } from 'react';
 import CalendarHeatmap from 'react-calendar-heatmap';
 import 'react-calendar-heatmap/dist/styles.css';
+import { Tooltip } from 'react-tooltip';
+import 'react-tooltip/dist/react-tooltip.css';
 import { fetchDailyStats } from '@/services/heatmap/dailyStat.service';
 
-type HeatmapValue = {
-  date: string;
-  count: number;
-};
+type HeatmapValue = { date: string; count: number };
 
-/** 토요일 기준으로 endDate 설정  */
 function endOfWeek(date = new Date()) {
   const d = new Date(date);
-  const diff = 6 - d.getDay(); // 0=Sun, 6=Sat
-  d.setDate(d.getDate() + diff);
+  d.setDate(d.getDate() + (6 - d.getDay()));
   return d;
 }
 
-type Props = {
-  uid?: string;
-};
+type Props = { uid?: string };
 
-export const GrassHeatmap = ({ uid }: Props) => {
+export default function GrassHeatmap({ uid }: Props) {
   const endDate = useMemo(() => endOfWeek(new Date()), []);
   const startDate = useMemo(() => {
     const d = new Date(endDate);
@@ -31,28 +26,46 @@ export const GrassHeatmap = ({ uid }: Props) => {
     return d;
   }, [endDate]);
 
-  const [values, setValues] = useState<HeatmapValue[]>([]);
+  const [values, setValues] = useState<
+    { date: string; total: number; tilCount?: number; todoDoneCount?: number }[]
+  >([]);
+
   useEffect(() => {
     if (!uid) return;
-
     (async () => {
       const stats = await fetchDailyStats(uid);
-      const heatmapValues: HeatmapValue[] = stats.map((s) => ({
-        date: s.date,
-        count: s.total,
-      }));
-      setValues(heatmapValues);
+      setValues(stats);
     })();
   }, [uid]);
+
+  const byDate = useMemo(() => {
+    const m = new Map<
+      string,
+      { tilCount: number; todoDoneCount: number; total: number }
+    >();
+    for (const s of values) {
+      m.set(s.date, {
+        tilCount: s.tilCount ?? 0,
+        todoDoneCount: s.todoDoneCount ?? 0,
+        total: s.total ?? 0,
+      });
+    }
+    return m;
+  }, [values]);
+
+  const heatmapValues: HeatmapValue[] = useMemo(
+    () => values.map((s) => ({ date: s.date, count: s.total ?? 0 })),
+    [values]
+  );
+
   return (
     <>
-      {/* 가로 길어질 때 대비 */}
       <div className="overflow-x-auto">
         <div className="min-w-max">
           <CalendarHeatmap
             startDate={startDate}
             endDate={endDate}
-            values={values}
+            values={heatmapValues}
             gutterSize={2}
             showWeekdayLabels
             classForValue={(value) => {
@@ -63,13 +76,38 @@ export const GrassHeatmap = ({ uid }: Props) => {
               return 'grass-1';
             }}
             tooltipDataAttrs={(value) => {
-              if (!value) return { 'data-tip': '기록 없음' };
-              return { 'data-tip': `${value.date} · ${value.count}개 완료` };
+              if (!value?.date)
+                return { 'data-tooltip-id': '', 'data-tooltip-html': '' };
+              const d = byDate.get(value.date);
+
+              const til = d?.tilCount ?? 0;
+              const todo = d?.todoDoneCount ?? 0;
+              const total = d?.total ?? 0;
+
+              return {
+                'data-tooltip-id': 'grass-tip',
+                // HTML 툴팁 (작은 박스)
+                'data-tooltip-html':
+                  total === 0
+                    ? `<div style="font-size:12px"><b>${value.date}</b><br/>기록 없음</div>`
+                    : `<div style="font-size:12px">
+                        <b>${value.date}</b><br/>
+                        📘 TIL: ${til}개<br/>
+                        ✅ Plan: ${todo}개<br/>
+                        🔥 합계: ${total}개
+                       </div>`,
+              };
             }}
           />
         </div>
       </div>
 
+      {/* 툴팁 컴포넌트 */}
+      <Tooltip
+        id="grass-tip"
+        place="top"
+        className="!rounded-lg !bg-black/80 !px-3 !py-2 !text-xs !text-white"
+      />
       {/* 범례 */}
       <div className="mt-4 flex items-center justify-end gap-2 text-xs text-slate-500">
         <span>Less</span>
@@ -82,5 +120,4 @@ export const GrassHeatmap = ({ uid }: Props) => {
       </div>
     </>
   );
-};
-export default GrassHeatmap;
+}

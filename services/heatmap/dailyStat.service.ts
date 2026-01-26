@@ -7,6 +7,7 @@ import {
   query,
   where,
   orderBy,
+  getDoc,
 } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 
@@ -14,6 +15,13 @@ export interface DailyStat {
   date: string; // YYYY-MM-DD
   total: number;
 }
+
+export type DailyStatDetail = {
+  date: string;
+  tilCount: number;
+  todoDoneCount: number;
+  total: number;
+};
 
 function dateKeyKST(date = new Date()) {
   const kst = new Date(date.getTime() + 9 * 60 * 60 * 1000);
@@ -57,7 +65,7 @@ export const bumpDailyStat = async (
   });
 };
 
-export const fetchDailyStats = async (uid: string) => {
+export const fetchDailyStats = async (uid: string): Promise<DailyStat[]> => {
   const colRef = collection(db, 'users', uid, 'dailyStats');
 
   const endDate = dateKeyKST(new Date());
@@ -81,7 +89,27 @@ export const fetchDailyStats = async (uid: string) => {
     const data = doc.data();
     return {
       date: data.date,
+      tilCount: data.tilCount ?? 0,
+      todoDoneCount: data.todoDoneCount ?? 0,
       total: data.total ?? 0,
     };
   });
+};
+
+export const fetchDailyStatByDate = async (
+  uid: string,
+  date: string // YYYY-MM-DD
+): Promise<DailyStatDetail | null> => {
+  const ref = doc(db, 'users', uid, 'dailyStats', date);
+  const snap = await getDoc(ref);
+
+  if (!snap.exists()) return null;
+
+  const data = snap.data();
+  return {
+    date: data.date,
+    tilCount: data.tilCount ?? 0,
+    todoDoneCount: data.todoDoneCount ?? 0,
+    total: data.total ?? 0,
+  };
 };
