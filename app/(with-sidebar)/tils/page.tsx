@@ -11,6 +11,7 @@ import { fetchTilList } from '@/services/tils/tilListService.service';
 import { deleteTil } from '@/services/write/til.service';
 
 import type { TilItem } from '@/types/til';
+import Pagination from '@/components/common/Pagination';
 
 const Page = () => {
   const { user, authLoading } = useAuthUser();
@@ -22,6 +23,9 @@ const Page = () => {
   const [sortedItems, setSortedItems] = useState<TilItem[]>([]);
 
   const [searchTerm, setSearchTerm] = useState('');
+
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 4;
 
   // 데이터 가져오기
   useEffect(() => {
@@ -63,6 +67,17 @@ const Page = () => {
     });
     setSortedItems(sorted);
   }, [items, sort, searchTerm]);
+
+  const totalPages = Math.ceil(sortedItems.length / itemsPerPage);
+
+  const currentData = sortedItems.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
+
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+  };
 
   const handleDelete = async (id: string) => {
     if (!user) return;
@@ -115,8 +130,14 @@ const Page = () => {
       {loading ? (
         <p className="text-sm text-slate-400">불러오는 중...</p>
       ) : (
-        <TilList items={sortedItems} onDelete={handleDelete} />
+        <TilList items={currentData} onDelete={handleDelete} />
       )}
+
+      <Pagination
+        currentPage={currentPage}
+        totalPages={totalPages}
+        onPageChange={handlePageChange}
+      />
     </div>
   );
 };
