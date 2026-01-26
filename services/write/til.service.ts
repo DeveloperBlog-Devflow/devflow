@@ -57,8 +57,8 @@ export async function fetchMyTil(
   uid: string | null | undefined,
   tilId: string | null | undefined
 ): Promise<Til | null> {
-  // 여기서 uid/tilId 실물 확인
-  console.log('[fetchMyPost] path =', { uid, tilId });
+  // // 여기서 uid/tilId 실물 확인
+  // console.log('[fetchMyPost] path =', { uid, tilId });
 
   if (!uid || !tilId) return null;
 

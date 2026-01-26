@@ -1,15 +1,16 @@
 'use client';
 
-import { useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import CalendarHeatmap from 'react-calendar-heatmap';
 import 'react-calendar-heatmap/dist/styles.css';
+import { fetchDailyStats } from '@/services/heatmap/dailyStat.service';
 
 type HeatmapValue = {
   date: string;
   count: number;
 };
 
-/** 이번 주 토요일 기준으로 endDate 맞추기 (GitHub 느낌) */
+/** 토요일 기준으로 endDate 설정  */
 function endOfWeek(date = new Date()) {
   const d = new Date(date);
   const diff = 6 - d.getDay(); // 0=Sun, 6=Sat
@@ -17,28 +18,11 @@ function endOfWeek(date = new Date()) {
   return d;
 }
 
-/** mock data: 최근 1년 */
-function buildMockValues(days = 366): HeatmapValue[] {
-  const out: HeatmapValue[] = [];
-  const today = new Date();
+type Props = {
+  uid?: string;
+};
 
-  for (let i = days - 1; i >= 0; i--) {
-    const d = new Date(today);
-    d.setDate(today.getDate() - i);
-
-    const iso = d.toISOString().slice(0, 10);
-
-    const r = Math.random();
-    const count =
-      r < 0.65 ? 0 : r < 0.85 ? 1 : r < 0.95 ? 2 : r < 0.985 ? 3 : 4;
-
-    if (count > 0) out.push({ date: iso, count });
-  }
-
-  return out;
-}
-
-export default function GrassHeatmap() {
+export const GrassHeatmap = ({ uid }: Props) => {
   const endDate = useMemo(() => endOfWeek(new Date()), []);
   const startDate = useMemo(() => {
     const d = new Date(endDate);
@@ -47,8 +31,19 @@ export default function GrassHeatmap() {
     return d;
   }, [endDate]);
 
-  const values = useMemo(() => buildMockValues(366), []);
+  const [values, setValues] = useState<HeatmapValue[]>([]);
+  useEffect(() => {
+    if (!uid) return;
 
+    (async () => {
+      const stats = await fetchDailyStats(uid);
+      const heatmapValues: HeatmapValue[] = stats.map((s) => ({
+        date: s.date,
+        count: s.total,
+      }));
+      setValues(heatmapValues);
+    })();
+  }, [uid]);
   return (
     <>
       {/* 가로 길어질 때 대비 */}
@@ -87,4 +82,5 @@ export default function GrassHeatmap() {
       </div>
     </>
   );
-}
+};
+export default GrassHeatmap;

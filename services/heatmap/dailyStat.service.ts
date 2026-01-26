@@ -1,16 +1,30 @@
-import { doc, runTransaction, serverTimestamp } from 'firebase/firestore';
+import {
+  doc,
+  runTransaction,
+  serverTimestamp,
+  collection,
+  getDocs,
+  query,
+  where,
+  orderBy,
+} from 'firebase/firestore';
 import { db } from '@/lib/firebase';
+
+export interface DailyStat {
+  date: string; // YYYY-MM-DD
+  total: number;
+}
 
 function dateKeyKST(date = new Date()) {
   const kst = new Date(date.getTime() + 9 * 60 * 60 * 1000);
   return kst.toISOString().slice(0, 10);
 }
 
-export async function bumpDailyStat(
+export const bumpDailyStat = async (
   uid: string,
   deltaTil: number,
   deltaTodoDone: number
-) {
+) => {
   const key = dateKeyKST();
   const ref = doc(db, `users/${uid}/dailyStats/${key}`);
 
@@ -41,4 +55,33 @@ export async function bumpDailyStat(
       { merge: true }
     );
   });
-}
+};
+
+export const fetchDailyStats = async (uid: string) => {
+  const colRef = collection(db, 'users', uid, 'dailyStats');
+
+  const endDate = dateKeyKST(new Date());
+  const startDate = (() => {
+    const d = new Date();
+    d.setFullYear(d.getFullYear() - 1);
+    d.setDate(d.getDate() + 1);
+    return dateKeyKST(d);
+  })();
+
+  const q = query(
+    colRef,
+    where('date', '>=', startDate),
+    where('date', '<=', endDate),
+    orderBy('date', 'asc')
+  );
+
+  const snap = await getDocs(q);
+
+  return snap.docs.map((doc) => {
+    const data = doc.data();
+    return {
+      date: data.date,
+      total: data.total ?? 0,
+    };
+  });
+};
