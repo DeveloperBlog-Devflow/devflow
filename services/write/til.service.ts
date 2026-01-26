@@ -9,6 +9,7 @@ import {
   Timestamp,
 } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
+import { bumpDailyStat } from '@/services/heatmap/dailyStat.service';
 
 export type TilData = {
   title: string;
@@ -27,6 +28,7 @@ export async function createTil(uid: string, content: string, title: string) {
     createdAt: serverTimestamp(),
     updatedAt: serverTimestamp(),
   });
+  await bumpDailyStat(uid, 1, 0);
   return docRef.id;
 }
 
