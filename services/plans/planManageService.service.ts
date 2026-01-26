@@ -12,6 +12,7 @@ import {
   writeBatch,
 } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
+import { bumpDailyStat } from '@/services/heatmap/dailyStat.service';
 
 // 플랜 데이터 타입
 export interface Plan {
@@ -111,6 +112,8 @@ export const toggleItemStatus = async (
   await updateDoc(itemRef, {
     isChecked: !currentStatus,
   });
+  const delta = !currentStatus ? 1 : -1;
+  await bumpDailyStat(uid, 0, delta);
 };
 
 // 6. 플랜 삭제

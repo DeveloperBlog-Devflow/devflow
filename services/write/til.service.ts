@@ -9,6 +9,7 @@ import {
   Timestamp,
 } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
+import { bumpDailyStat } from '@/services/heatmap/dailyStat.service';
 
 export type TilData = {
   title: string;
@@ -27,6 +28,7 @@ export async function createTil(uid: string, content: string, title: string) {
     createdAt: serverTimestamp(),
     updatedAt: serverTimestamp(),
   });
+  await bumpDailyStat(uid, 1, 0);
   return docRef.id;
 }
 
@@ -55,8 +57,8 @@ export async function fetchMyTil(
   uid: string | null | undefined,
   tilId: string | null | undefined
 ): Promise<Til | null> {
-  // 여기서 uid/tilId 실물 확인
-  console.log('[fetchMyPost] path =', { uid, tilId });
+  // // 여기서 uid/tilId 실물 확인
+  // console.log('[fetchMyPost] path =', { uid, tilId });
 
   if (!uid || !tilId) return null;
 

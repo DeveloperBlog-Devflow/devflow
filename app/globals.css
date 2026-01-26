@@ -42,3 +42,33 @@
   /* 텍스트(흰색) */
   --color-text-invert: #ffffff;
 }
+/* --- 잔디그래프 --- */
+.react-calendar-heatmap {
+  transform-origin: top left;
+}
+
+.react-calendar-heatmap text {
+  font-size: 8px;
+  fill: #9ca3af; /* gray-400 */
+}
+
+.react-calendar-heatmap rect {
+  rx: 3px;
+  ry: 3px;
+}
+
+.react-calendar-heatmap .grass-empty {
+  fill: #f1f5f9;
+}
+.react-calendar-heatmap .grass-1 {
+  fill: #a7f3d0;
+}
+.react-calendar-heatmap .grass-2 {
+  fill: #34d399;
+}
+.react-calendar-heatmap .grass-3 {
+  fill: #059669;
+}
+.react-calendar-heatmap .grass-4 {
+  fill: #065f46;
+}
