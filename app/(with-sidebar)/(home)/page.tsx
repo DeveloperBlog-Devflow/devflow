@@ -99,7 +99,7 @@ const Page = () => {
       />
 
       {/* 2-2. GraphSection */}
-      <GraphSection></GraphSection>
+      <GraphSection uid={currentUser.uid}></GraphSection>
 
       {/* 2-3. BottomSection */}
       <BottomSection
