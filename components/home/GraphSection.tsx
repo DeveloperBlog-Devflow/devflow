@@ -1,4 +1,5 @@
 import Card from './Card';
+import GrassHeatmap from '../heatmap/GrassHeatmap';
 
 interface GraphSectionProps {
   className?: string;
@@ -7,7 +8,9 @@ interface GraphSectionProps {
 const GraphSection = ({ className }: GraphSectionProps) => {
   return (
     <div className={className}>
-      <Card title="학습 기록">잔디그래프 구현 예정</Card>
+      <Card title="학습 기록">
+        <GrassHeatmap />
+      </Card>
     </div>
   );
 };
