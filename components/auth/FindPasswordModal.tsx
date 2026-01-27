@@ -3,6 +3,8 @@
 import { useEffect, useRef, useState } from 'react';
 import Button from './Button';
 import FormField from './FormField';
+import { auth } from '@/lib/firebase';
+import { sendPasswordResetEmail } from 'firebase/auth';
 
 type FindPasswordModalProps = {
   onClose: () => void;
@@ -28,6 +30,13 @@ const FindPasswordModal = ({ onClose }: FindPasswordModalProps) => {
     }
 
     // 이메일 요청 로직
+    sendPasswordResetEmail(auth, email)
+      .then(() => {
+        alert('이메일이 발송되었습니다.');
+      })
+      .catch((error) => {
+        alert('에러 발생: ' + error.message);
+      });
   };
 
   // esc로 모달을 닫을 수 있는 기능
