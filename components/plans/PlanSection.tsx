@@ -33,6 +33,7 @@ interface PlanSectionProps {
     newTitle: string,
     newDescription: string
   ) => void;
+  onChangeStats: () => void;
 }
 
 export default function PlanSection({
@@ -42,6 +43,7 @@ export default function PlanSection({
   description,
   onDeletePlan,
   onUpdatePlan,
+  onChangeStats,
 }: PlanSectionProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [tasks, setTasks] = useState<PlanItem[]>([]);
@@ -111,6 +113,8 @@ export default function PlanSection({
       // 데이터 최신화: DB 업데이트 후 목록을 다시 불러옵니다.
       const updatedTasks = await fetchPlanItems(userId, planId);
       setTasks(updatedTasks);
+
+      onChangeStats();
     } catch (error) {
       console.error('상태 변경 실패: ', error);
       // 에러 시 원래대로 돌리거나 다시 불러오기
@@ -142,6 +146,8 @@ export default function PlanSection({
     onDeletePlan(planId, title);
 
     setShowPlanMenu(false);
+
+    onChangeStats();
   };
 
   // 5. 하위 항목 삭제 핸들러
@@ -157,6 +163,8 @@ export default function PlanSection({
         console.error(err);
       }
     }
+
+    onChangeStats();
   };
 
   // 6. 플랜 수정 핸들러
@@ -170,6 +178,7 @@ export default function PlanSection({
     setShowPlanMenu(false); // 메뉴 닫기
   };
 
+  // 플랜 수정 핸들러
   const handleSaveEdit = (e: React.MouseEvent) => {
     e.stopPropagation();
 

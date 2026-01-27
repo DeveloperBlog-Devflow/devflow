@@ -211,3 +211,17 @@ export const updatePlanItem = async (
     await updateDoc(itemRef, updatePayload);
   }
 };
+
+// 10. 하위 항목 모두 가져오기
+export const fetchAllPlanItems = async (uid: string): Promise<PlanItem[]> => {
+  const allPlanItemsRef = collection(db, 'users', uid, 'planItems');
+  const q = query(allPlanItemsRef);
+  const snapshot = await getDocs(q);
+
+  return snapshot.docs.map((doc) => ({
+    id: doc.id,
+    planId: doc.data().planId,
+    isChecked: doc.data().isChecked,
+    ...doc.data(),
+  })) as PlanItem[];
+};

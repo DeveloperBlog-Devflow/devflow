@@ -7,8 +7,10 @@ import {
   addPlan,
   deletePlan,
   deletePlanItem,
+  fetchAllPlanItems,
   fetchPlans,
   Plan,
+  PlanItem,
   updatePlan,
 } from '@/services/plans/planManageService.service';
 
@@ -30,6 +32,56 @@ const Page = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 4;
 
+  const [stats, setStats] = useState({
+    total: 0,
+    working: 0, // 진행중
+    completed: 0, // 완료됨
+  });
+
+  // 카드 업데이트를 위한 stats 가져오기 메서드
+  const fetchAndCalculate = async (uid: string) => {
+    try {
+      // 1. 데이터 병렬 로드
+      const [fetchedPlans, fetchedItems] = await Promise.all([
+        fetchPlans(uid),
+        fetchAllPlanItems(uid),
+      ]);
+
+      setPlans(fetchedPlans); // 플랜 목록 업데이트
+
+      // 2. 통계 계산 로직
+      let completedCount = 0;
+      let workingCount = 0;
+
+      fetchedPlans.forEach((plan) => {
+        const myItems = fetchedItems.filter(
+          (item: PlanItem) => item.planId === plan.id
+        );
+        // ⚠️ 하위 항목이 하나라도 있는 경우에만 상태를 판별합니다.
+        if (myItems.length > 0) {
+          const isAllChecked = myItems.every(
+            (item: PlanItem) => item.isChecked
+          );
+
+          if (isAllChecked) {
+            completedCount++; // 모두 완료됨
+          } else {
+            workingCount++; // 항목은 있는데 아직 다 완료 안 됨 -> 진행중
+          }
+        }
+      });
+
+      // 3. 통계 State 업데이트
+      setStats({
+        total: fetchedPlans.length,
+        completed: completedCount,
+        working: workingCount,
+      });
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
   // 사용자 인증 상태 리스너 및 초기 플랜 목록 로드
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
@@ -37,10 +89,15 @@ const Page = () => {
 
       if (currentUser) {
         try {
-          const fetchedPlans = await fetchPlans(currentUser.uid);
-          setPlans(fetchedPlans);
+          const [fetchedPlans, fetchedItems] = await Promise.all([
+            fetchPlans(currentUser.uid),
+            fetchAllPlanItems(currentUser.uid),
+          ]);
 
+          setPlans(fetchedPlans);
           setCurrentPage(1);
+
+          await fetchAndCalculate(currentUser.uid);
         } catch (err) {
           console.error('플랜 목록 로딩 실패:', err);
           setPlans([]);
@@ -68,6 +125,8 @@ const Page = () => {
       const fetchedPlans = await fetchPlans(user.uid);
       setPlans(fetchedPlans);
       setCurrentPage(1);
+
+      await fetchAndCalculate(user.uid);
 
       setIsAdding(false); // 폼 닫기
     } catch (err) {
@@ -98,6 +157,8 @@ const Page = () => {
         // 목록 새로고침
         const fetchedPlans = await fetchPlans(user.uid);
         setPlans(fetchedPlans);
+
+        await fetchAndCalculate(user.uid);
 
         // 페이지 조절
         if (
@@ -136,6 +197,7 @@ const Page = () => {
     }
   };
 
+  // 페이지네이션 파트
   const totalPages = Math.ceil(plans.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
@@ -181,7 +243,9 @@ const Page = () => {
             <span className="text-text-sub text-sm font-medium">
               진행중인 플랜 수
             </span>
-            <span className="text-4xl font-bold text-[#7B44C4]">1</span>
+            <span className="text-4xl font-bold text-[#7B44C4]">
+              {stats.working}
+            </span>
           </div>
 
           {/* 오른쪽: 아이콘 영역 */}
@@ -195,7 +259,9 @@ const Page = () => {
             <span className="text-text-sub text-sm font-medium">
               완료된 플랜 수
             </span>
-            <span className="text-4xl font-bold text-[#00841F]">1</span>
+            <span className="text-4xl font-bold text-[#00841F]">
+              {stats.completed}
+            </span>
           </div>
 
           {/* 오른쪽: 아이콘 영역 */}
@@ -237,6 +303,7 @@ const Page = () => {
                   description={plan.description}
                   onDeletePlan={handleDeletePlan}
                   onUpdatePlan={handleUpdatePlan}
+                  onChangeStats={() => fetchAndCalculate(user!.uid)}
                 />
               ))
             ) : (
