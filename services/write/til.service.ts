@@ -7,8 +7,10 @@ import {
   deleteDoc,
   serverTimestamp,
   Timestamp,
+  getCountFromServer,
 } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
+import { bumpDailyStat } from '@/services/heatmap/dailyStat.service';
 
 export type TilData = {
   title: string;
@@ -27,19 +29,21 @@ export async function createTil(uid: string, content: string, title: string) {
     createdAt: serverTimestamp(),
     updatedAt: serverTimestamp(),
   });
+  await bumpDailyStat(uid, 1, 0);
+  await fetchTilCount(uid);
   return docRef.id;
 }
 
-/** 런타임 최소 검증(안전하게 any 제거) */
-function isRecord(v: unknown): v is Record<string, unknown> {
+/** 런타임 최소 검증 */
+const isRecord = (v: unknown): v is Record<string, unknown> => {
   return typeof v === 'object' && v !== null;
-}
+};
 
-function parseTilData(raw: unknown): TilData | null {
+const parseTilData = (raw: unknown): TilData | null => {
   if (!isRecord(raw)) return null;
 
   const content = raw.content;
-  if (typeof content !== 'string') return null; // content는 필수
+  if (typeof content !== 'string') return null;
 
   const title = raw.title;
   if (typeof title !== 'string') return null;
@@ -49,14 +53,13 @@ function parseTilData(raw: unknown): TilData | null {
   const updatedAt = raw.updatedAt instanceof Timestamp ? raw.updatedAt : null;
 
   return { title, content, createdAt, updatedAt };
-}
+};
 
-export async function fetchMyTil(
+export const fetchMyTil = async (
   uid: string | null | undefined,
   tilId: string | null | undefined
-): Promise<Til | null> {
-  // 여기서 uid/tilId 실물 확인
-  console.log('[fetchMyPost] path =', { uid, tilId });
+): Promise<Til | null> => {
+  // console.log('[fetchMyPost] path =', { uid, tilId });
 
   if (!uid || !tilId) return null;
 
@@ -68,22 +71,32 @@ export async function fetchMyTil(
   if (!parsed) return null;
 
   return { id: snap.id, ...parsed };
-}
+};
 
-export async function updateTil(
+export const updateTil = async (
   uid: string,
   tilId: string,
   title: string,
   content: string
-) {
+) => {
   const ref = doc(db, 'users', uid, 'tils', tilId);
   await updateDoc(ref, {
     title,
     content,
     updatedAt: serverTimestamp(),
   });
-}
+};
 
-export async function deleteTil(uid: string, tilId: string) {
+export const deleteTil = async (uid: string, tilId: string) => {
   await deleteDoc(doc(db, 'users', uid, 'tils', tilId));
-}
+  await fetchTilCount(uid);
+};
+
+export const fetchTilCount = async (uid: string) => {
+  const colRef = collection(db, 'users', uid, 'tils');
+  const ref = doc(db, 'users', uid);
+  const snap = await getCountFromServer(colRef);
+  await updateDoc(ref, {
+    tilCount: snap.data().count,
+  });
+};

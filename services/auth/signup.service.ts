@@ -35,20 +35,18 @@ export const signupWithGithub = async () => {
 
   const info = getAdditionalUserInfo(result);
   const githubUsername = info?.username ?? null;
-
+  const avatar_url = info?.profile?.avatar_url;
   const userRef = doc(db, 'users', user.uid);
   const snap = await getDoc(userRef);
 
   if (!snap.exists()) {
     await setDoc(userRef, {
-      userId: user.uid,
       nickname: user.displayName ?? githubUsername ?? '익명',
       email: user.email ?? '',
-      provider: 'github.com',
-      githubUsername,
       createdAt: serverTimestamp(),
       streakDays: 0,
       tilCount: 0,
+      avatar_url: avatar_url,
     });
   }
   return user;

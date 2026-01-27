@@ -1,6 +1,8 @@
+import Image from 'next/image';
 import { Profile } from '@/services/home/profileService.service';
 import Card from './Card';
 import { getRandomProfileIcon } from '@/utils/getRandomProfileIcon';
+
 interface ProfileSectionProps {
   className?: string;
   profile: Profile | null;
@@ -9,12 +11,26 @@ interface ProfileSectionProps {
 
 const ProfileSection = ({ className, profile, uid }: ProfileSectionProps) => {
   const icon = getRandomProfileIcon(uid);
+  const avatarUrl = profile?.avatar_url;
+
   return (
     <div className={className}>
       <div className="md:col-span-2">
         <Card className="flex items-center gap-4">
           <div className="flex h-16 w-16 items-center justify-center overflow-hidden rounded-full border border-gray-100 bg-purple-100 pt-1">
-            <span className="text-3xl">{icon}</span>
+            <span className="text-3xl">
+              {avatarUrl ? (
+                <Image
+                  src={avatarUrl}
+                  alt="profile avatar"
+                  width={50}
+                  height={50}
+                  className="h-full w-full object-cover"
+                />
+              ) : (
+                <span className="text-3xl">{icon}</span>
+              )}
+            </span>
           </div>
 
           <div>
