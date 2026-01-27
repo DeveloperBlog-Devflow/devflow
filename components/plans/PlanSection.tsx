@@ -200,7 +200,7 @@ export default function PlanSection({
     <Card className="mb-4 transition-all duration-200">
       {/* 헤더 영역 */}
       <div
-        className="flex cursor-pointer items-start justify-between"
+        className="flex cursor-pointer items-center justify-between"
         onClick={() => !isEditingPlan && setIsOpen(!isOpen)}
       >
         {isEditingPlan ? (
@@ -247,7 +247,7 @@ export default function PlanSection({
           </div>
         )}
 
-        <div className="flex items-center gap-4">
+        <div className="flex items-center justify-center gap-4">
           <div className="text-right">
             <span className="block text-xs text-gray-500">진행률</span>
             <span className="text-lg font-bold text-[#556BD6]">
