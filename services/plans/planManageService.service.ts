@@ -142,7 +142,32 @@ export const deletePlanItem = async (uid: string, itemId: string) => {
   await deleteDoc(itemRef);
 };
 
-// 8. 하위 항목 수정 (제목, 설명, 마감일)
+// 8. 플랜 수정 (제목, 설명)
+export const updatePlan = async (
+  uid: string,
+  planId: string,
+  updates: { text?: string; description?: string }
+) => {
+  const planRef = doc(db, 'users', uid, 'plans', planId);
+
+  const updatePayload: {
+    text?: string;
+    description?: string;
+  } = {};
+
+  if (updates.text !== undefined) {
+    updatePayload.text = updates.text;
+  }
+  if (updates.description !== undefined) {
+    updatePayload.description = updates.description;
+  }
+
+  if (Object.keys(updatePayload).length > 0) {
+    await updateDoc(planRef, updatePayload);
+  }
+};
+
+// 9. 하위 항목 수정 (제목, 설명, 마감일)
 export const updatePlanItem = async (
   uid: string,
   itemId: string,
