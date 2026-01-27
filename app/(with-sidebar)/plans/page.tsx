@@ -19,12 +19,16 @@ import PlanSection from '@/components/plans/PlanSection';
 import SearchBar from '@/components/plans/SearchBar';
 import InlineAddPlanForm from '@/components/plans/InlineAddPlanForm';
 import { Target, Calendar, CheckCircle2 } from 'lucide-react';
+import Pagination from '@/components/common/Pagination';
 
 const Page = () => {
   const [user, setUser] = useState<User | null>(null);
   const [plans, setPlans] = useState<Plan[]>([]);
   const [isAdding, setIsAdding] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 5;
 
   // 사용자 인증 상태 리스너 및 초기 플랜 목록 로드
   useEffect(() => {
@@ -35,9 +39,13 @@ const Page = () => {
         try {
           const fetchedPlans = await fetchPlans(currentUser.uid);
           setPlans(fetchedPlans);
+
+          setCurrentPage(1);
         } catch (err) {
           console.error('플랜 목록 로딩 실패:', err);
           setPlans([]);
+
+          setCurrentPage(1);
         }
       } else {
         setPlans([]);
@@ -59,6 +67,7 @@ const Page = () => {
       // 목록 새로고침
       const fetchedPlans = await fetchPlans(user.uid);
       setPlans(fetchedPlans);
+      setCurrentPage(1);
 
       setIsAdding(false); // 폼 닫기
     } catch (err) {
@@ -89,6 +98,16 @@ const Page = () => {
         // 목록 새로고침
         const fetchedPlans = await fetchPlans(user.uid);
         setPlans(fetchedPlans);
+
+        // 페이지 조절
+        if (
+          currentPage > Math.ceil((plans.length - 1) / itemsPerPage) &&
+          Math.ceil((plans.length - 1) / itemsPerPage) > 0
+        ) {
+          setCurrentPage(Math.ceil((plans.length - 1) / itemsPerPage));
+        } else if (Math.ceil((plans.length - 1) / itemsPerPage) === 0) {
+          setCurrentPage(1);
+        }
       } catch (err) {
         console.error(err);
       }
@@ -116,6 +135,19 @@ const Page = () => {
       console.error(err);
     }
   };
+
+  const totalPages = Math.ceil(plans.length / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const paginatedPlans = plans.slice(startIndex, endIndex);
+
+  useEffect(() => {
+    if (currentPage > totalPages && totalPages > 0) {
+      setCurrentPage(totalPages);
+    } else if (totalPages === 0 && currentPage !== 1) {
+      setCurrentPage(1);
+    }
+  }, [plans.length, totalPages, currentPage]);
 
   return (
     <div className="bg-background min-h-screen p-11">
@@ -176,13 +208,13 @@ const Page = () => {
       {/* 검색 바 */}
       <SearchBar />
 
-      {isLoading ? (
-        <p>플랜을 불러오는 중...</p>
-      ) : (
-        <div>
-          <section className="space-y-6">
-            {plans.length > 0 && user ? (
-              plans.map((plan) => (
+      <section className="space-y-6">
+        {isLoading ? (
+          <p>플랜을 불러오는 중...</p>
+        ) : (
+          <div>
+            {paginatedPlans.length > 0 && user ? (
+              paginatedPlans.map((plan) => (
                 <PlanSection
                   key={plan.id}
                   userId={user.uid}
@@ -196,23 +228,32 @@ const Page = () => {
             ) : (
               <p>아직 생성된 플랜이 없습니다. 첫 플랜을 추가해보세요!</p>
             )}
-          </section>
-
-          {/* 하단 추가 버튼 or 인라인 폼 */}
-          <div className="mt-6">
-            {isAdding ? (
-              <InlineAddPlanForm
-                onSave={handleSavePlan}
-                onCancel={handleCancelAdd}
-              />
-            ) : (
-              <div onClick={() => setIsAdding(true)}>
-                <AddPlanButton />
-              </div>
-            )}
           </div>
-        </div>
+        )}
+      </section>
+
+      {/* 페이지네이션 컴포넌트 */}
+      {totalPages > 1 && (
+        <Pagination
+          totalPages={totalPages}
+          currentPage={currentPage}
+          onPageChange={setCurrentPage}
+        />
       )}
+
+      {/* 하단 추가 버튼 or 인라인 폼 */}
+      <div className="mt-6">
+        {isAdding ? (
+          <InlineAddPlanForm
+            onSave={handleSavePlan}
+            onCancel={handleCancelAdd}
+          />
+        ) : (
+          <div onClick={() => setIsAdding(true)}>
+            <AddPlanButton />
+          </div>
+        )}
+      </div>
     </div>
   );
 };
