@@ -146,17 +146,17 @@ export const deletePlanItem = async (uid: string, itemId: string) => {
 export const updatePlan = async (
   uid: string,
   planId: string,
-  updates: { text?: string; description?: string }
+  updates: { title?: string; description?: string }
 ) => {
   const planRef = doc(db, 'users', uid, 'plans', planId);
 
   const updatePayload: {
-    text?: string;
+    title?: string;
     description?: string;
   } = {};
 
-  if (updates.text !== undefined) {
-    updatePayload.text = updates.text;
+  if (updates.title !== undefined) {
+    updatePayload.title = updates.title;
   }
   if (updates.description !== undefined) {
     updatePayload.description = updates.description;

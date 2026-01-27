@@ -9,6 +9,7 @@ import {
   deletePlanItem,
   fetchPlans,
   Plan,
+  updatePlan,
 } from '@/services/plans/planManageService.service';
 
 import PageHeader from '@/components/common/PageHeader';
@@ -94,6 +95,28 @@ const Page = () => {
     }
   };
 
+  // 플랜 수정 핸들러
+  const handleUpdatePlan = async (
+    planId: string,
+    title: string,
+    description: string
+  ) => {
+    if (!user) {
+      alert('로그인이 필요합니다.');
+      return;
+    }
+
+    try {
+      await updatePlan(user.uid, planId, { title, description });
+
+      // 목록 새로고침
+      const fetchedPlans = await fetchPlans(user.uid);
+      setPlans(fetchedPlans);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
   return (
     <div className="bg-background min-h-screen p-11">
       <PageHeader
@@ -167,6 +190,7 @@ const Page = () => {
                   title={plan.title}
                   description={plan.description}
                   onDeletePlan={handleDeletePlan}
+                  onUpdatePlan={handleUpdatePlan}
                 />
               ))
             ) : (
