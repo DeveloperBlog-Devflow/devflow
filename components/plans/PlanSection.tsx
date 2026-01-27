@@ -43,7 +43,7 @@ export default function PlanSection({
   onDeletePlan,
   onUpdatePlan,
 }: PlanSectionProps) {
-  const [isOpen, setIsOpen] = useState(true);
+  const [isOpen, setIsOpen] = useState(false);
   const [tasks, setTasks] = useState<PlanItem[]>([]);
   const [isTasksLoading, setIsTasksLoading] = useState(true);
   const [isAddingTask, setIsAddingTask] = useState(false);

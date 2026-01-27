@@ -28,7 +28,7 @@ const Page = () => {
   const [isLoading, setIsLoading] = useState(true);
 
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 5;
+  const itemsPerPage = 4;
 
   // 사용자 인증 상태 리스너 및 초기 플랜 목록 로드
   useEffect(() => {
@@ -208,6 +208,20 @@ const Page = () => {
       {/* 검색 바 */}
       <SearchBar />
 
+      {/* 하단 추가 버튼 or 인라인 폼 */}
+      <div className="mt-6 mb-4">
+        {isAdding ? (
+          <InlineAddPlanForm
+            onSave={handleSavePlan}
+            onCancel={handleCancelAdd}
+          />
+        ) : (
+          <div onClick={() => setIsAdding(true)}>
+            <AddPlanButton />
+          </div>
+        )}
+      </div>
+
       <section className="space-y-6">
         {isLoading ? (
           <p>플랜을 불러오는 중...</p>
@@ -240,20 +254,6 @@ const Page = () => {
           onPageChange={setCurrentPage}
         />
       )}
-
-      {/* 하단 추가 버튼 or 인라인 폼 */}
-      <div className="mt-6">
-        {isAdding ? (
-          <InlineAddPlanForm
-            onSave={handleSavePlan}
-            onCancel={handleCancelAdd}
-          />
-        ) : (
-          <div onClick={() => setIsAdding(true)}>
-            <AddPlanButton />
-          </div>
-        )}
-      </div>
     </div>
   );
 };
