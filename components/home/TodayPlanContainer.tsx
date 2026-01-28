@@ -31,6 +31,7 @@ export default function TodayPlanContainer({
         items={items}
         onToggleTodo={(id, checked) => onToggle(id, checked)}
         emptyText="오늘 완료할 계획이 없습니다"
+        checkbox={true}
       />
     </Card>
   );

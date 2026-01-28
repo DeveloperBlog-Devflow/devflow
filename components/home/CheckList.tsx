@@ -12,12 +12,14 @@ type CheckListProps<T extends CheckableItem> = {
   items: T[];
   onToggleTodo: (id: string, checked: boolean) => void;
   emptyText?: string;
+  checkbox?: boolean;
 };
 
 export default function CheckList<T extends CheckableItem>({
   items,
   onToggleTodo,
   emptyText = '아직 항목이 없습니다',
+  checkbox,
 }: CheckListProps<T>) {
   if (items.length === 0) {
     return <p className="text-sm text-gray-400">{emptyText}</p>;
@@ -31,6 +33,7 @@ export default function CheckList<T extends CheckableItem>({
           checked={item.isChecked}
           text={item.text}
           onToggle={() => onToggleTodo(item.id, item.isChecked)}
+          checkbox={checkbox}
         />
       ))}
     </div>
