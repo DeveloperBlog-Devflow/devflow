@@ -12,7 +12,7 @@ import {
   writeBatch,
 } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
-import { bumpDailyStat } from '@/services/heatmap/dailyStat.service';
+import { recomputeDailyStat } from '@/services/heatmap/dailyStat.service';
 
 // 플랜 데이터 타입
 export interface Plan {
@@ -30,6 +30,11 @@ export interface PlanItem {
   isChecked: boolean;
   deadline?: Date;
   createdAt: Date;
+  dateKey?: string;
+}
+function dateKeyKST(date = new Date()) {
+  const kst = new Date(date.getTime() + 9 * 60 * 60 * 1000);
+  return kst.toISOString().slice(0, 10);
 }
 
 // 1. 플랜 생성하기
@@ -99,6 +104,7 @@ export const addPlanItem = async (
     isChecked: false,
     deadline: deadline ? Timestamp.fromDate(deadline) : null,
     createdAt: Timestamp.now(),
+    dateKey: deadline ? dateKeyKST(deadline) : null,
   });
 };
 
@@ -112,8 +118,7 @@ export const toggleItemStatus = async (
   await updateDoc(itemRef, {
     isChecked: !currentStatus,
   });
-  const delta = !currentStatus ? 1 : -1;
-  await bumpDailyStat(uid, 0, delta);
+  await recomputeDailyStat(uid);
 };
 
 // 6. 플랜 삭제
@@ -178,6 +183,7 @@ export const updatePlanItem = async (
     text?: string; // 수정할 제목
     description?: string; // 수정할 설명
     deadline?: Date | null; // 수정할 마감일 (null이면 마감일 삭제)
+    dateKey?: string;
   }
 ) => {
   const itemRef = doc(db, 'users', uid, 'planItems', itemId);
@@ -187,6 +193,7 @@ export const updatePlanItem = async (
     text?: string;
     description?: string;
     deadline?: Timestamp | null;
+    dateKey?: string | null;
   } = {};
 
   // 1. 제목이 전달되었으면 업데이트 목록에 추가
@@ -204,6 +211,9 @@ export const updatePlanItem = async (
     updatePayload.deadline = updates.deadline
       ? Timestamp.fromDate(updates.deadline)
       : null; // null을 넘기면 DB에서 마감일이 사라짐
+    updatePayload.dateKey = updates.deadline
+      ? dateKeyKST(updates.deadline)
+      : null;
   }
 
   // 변경사항이 있을 때만 DB 요청
@@ -227,4 +237,67 @@ export const fetchAllPlanItems = async (uid: string): Promise<PlanItem[]> => {
       deadline: data.deadline?.toDate() ?? null,
     };
   }) as PlanItem[];
+};
+// 오늘의 할일 가져오기
+export const fetchTodayPlanItems = async (uid: string): Promise<PlanItem[]> => {
+  const itemsRef = collection(db, 'users', uid, 'planItems');
+
+  // KST 기준 오늘 00:00 ~ 내일 00:00
+  const now = new Date();
+  const kst = new Date(now.getTime() + 9 * 60 * 60 * 1000);
+  const startKST = new Date(kst.getFullYear(), kst.getMonth(), kst.getDate());
+  const start = new Date(startKST.getTime() - 9 * 60 * 60 * 1000);
+  const end = new Date(start.getTime() + 24 * 60 * 60 * 1000);
+
+  const q = query(
+    itemsRef,
+    where('deadline', '>=', Timestamp.fromDate(start)),
+    where('deadline', '<', Timestamp.fromDate(end)),
+    orderBy('deadline', 'asc'),
+    orderBy('createdAt', 'asc')
+  );
+
+  const snapshot = await getDocs(q);
+
+  return snapshot.docs.map((docSnap) => {
+    const data = docSnap.data();
+    return {
+      id: docSnap.id,
+      ...data,
+      createdAt: data.createdAt?.toDate(),
+      deadline: data.deadline?.toDate(),
+    };
+  }) as PlanItem[];
+};
+
+// 다가오는 일정 가져오기
+export const fetchUpcomingPlanItems = async (
+  uid: string,
+  fromDate: Date
+): Promise<PlanItem[]> => {
+  const itemsRef = collection(db, 'users', uid, 'planItems');
+
+  const q = query(
+    itemsRef,
+    where('deadline', '>=', Timestamp.fromDate(fromDate))
+  );
+
+  const snapshot = await getDocs(q);
+
+  const items = snapshot.docs.map((d) => {
+    const data = d.data();
+    return {
+      id: d.id,
+      ...data,
+      createdAt: data.createdAt?.toDate?.() ?? new Date(),
+      deadline: data.deadline?.toDate?.() ?? new Date(),
+    } as PlanItem;
+  });
+
+  //정렬
+  items.sort(
+    (a, b) => +a.deadline - +b.deadline || +a.createdAt - +b.createdAt
+  );
+
+  return items;
 };

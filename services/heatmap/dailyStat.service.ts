@@ -1,80 +1,79 @@
 import {
   doc,
-  runTransaction,
-  serverTimestamp,
+  setDoc,
   collection,
   getDocs,
   query,
   where,
+  serverTimestamp,
   orderBy,
   getDoc,
+  Timestamp,
+  limit,
+  updateDoc,
 } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 
 export interface DailyStat {
   date: string; // YYYY-MM-DD
-  total: number;
-}
-
-export type DailyStatDetail = {
-  date: string;
   tilCount: number;
-  todoDoneCount: number;
+  planDoneCount: number;
   total: number;
-};
+  updatedAt?: Timestamp;
+}
 
 function dateKeyKST(date = new Date()) {
   const kst = new Date(date.getTime() + 9 * 60 * 60 * 1000);
   return kst.toISOString().slice(0, 10);
 }
 
-export const bumpDailyStat = async (
-  uid: string,
-  deltaTil: number,
-  deltaTodoDone: number
-) => {
-  const key = dateKeyKST();
-  const ref = doc(db, `users/${uid}/dailyStats/${key}`);
+export const recomputeDailyStat = async (uid: string) => {
+  const dateKey = dateKeyKST();
 
-  await runTransaction(db, async (tx) => {
-    const snap = await tx.get(ref);
+  /** 1. 오늘 완료된 planItems */
 
-    const prev = snap.exists()
-      ? (snap.data() as {
-          tilCount?: number;
-          todoDoneCount?: number;
-          total?: number;
-        })
-      : {};
+  const planItemsRef = collection(db, 'users', uid, 'planItems');
+  const planQuery = query(
+    planItemsRef,
+    where('dateKey', '==', dateKey),
+    where('isChecked', '==', true)
+  );
+  const planSnap = await getDocs(planQuery);
+  const planDoneCount = planSnap.size;
 
-    const nextTil = Math.max(0, (prev.tilCount ?? 0) + deltaTil);
-    const nextTodo = Math.max(0, (prev.todoDoneCount ?? 0) + deltaTodoDone);
-    const nextTotal = Math.max(0, nextTil + nextTodo);
+  /** 2. 오늘 작성한 TIL */
+  const tilRef = collection(db, 'users', uid, 'tils');
+  const tilQuery = query(tilRef, where('dateKey', '==', dateKey));
+  const tilSnap = await getDocs(tilQuery);
+  const tilCount = tilSnap.size;
 
-    tx.set(
-      ref,
-      {
-        date: key,
-        tilCount: nextTil,
-        todoDoneCount: nextTodo,
-        total: nextTotal,
-        updatedAt: serverTimestamp(),
-      },
-      { merge: true }
-    );
-  });
+  /** 3. DailyStat 덮어쓰기 */
+  const ref = doc(db, 'users', uid, 'dailyStats', dateKey);
+
+  await setDoc(
+    ref,
+    {
+      date: dateKey,
+      tilCount,
+      planDoneCount,
+      total: tilCount + planDoneCount,
+      updatedAt: serverTimestamp(),
+    },
+    { merge: true }
+  );
+
+  /** 4. 연속 잔디 심기 일 수 계산 */
+  const streakDays = await fetchStreakDays(uid);
+  await updateDoc(doc(db, 'users', uid), { streakDays });
 };
 
 export const fetchDailyStats = async (uid: string): Promise<DailyStat[]> => {
   const colRef = collection(db, 'users', uid, 'dailyStats');
 
-  const endDate = dateKeyKST(new Date());
-  const startDate = (() => {
-    const d = new Date();
-    d.setFullYear(d.getFullYear() - 1);
-    d.setDate(d.getDate() + 1);
-    return dateKeyKST(d);
-  })();
+  const endDate = dateKeyKST();
+  const start = new Date();
+  start.setFullYear(start.getFullYear() - 1);
+  const startDate = dateKeyKST(start);
 
   const q = query(
     colRef,
@@ -85,21 +84,18 @@ export const fetchDailyStats = async (uid: string): Promise<DailyStat[]> => {
 
   const snap = await getDocs(q);
 
-  return snap.docs.map((doc) => {
-    const data = doc.data();
-    return {
-      date: data.date,
-      tilCount: data.tilCount ?? 0,
-      todoDoneCount: data.todoDoneCount ?? 0,
-      total: data.total ?? 0,
-    };
-  });
+  return snap.docs.map((d) => ({
+    date: d.data().date,
+    tilCount: d.data().tilCount ?? 0,
+    planDoneCount: d.data().planDoneCount ?? 0,
+    total: d.data().total ?? 0,
+  }));
 };
 
 export const fetchDailyStatByDate = async (
   uid: string,
-  date: string // YYYY-MM-DD
-): Promise<DailyStatDetail | null> => {
+  date: string
+): Promise<DailyStat | null> => {
   const ref = doc(db, 'users', uid, 'dailyStats', date);
   const snap = await getDoc(ref);
 
@@ -109,7 +105,48 @@ export const fetchDailyStatByDate = async (
   return {
     date: data.date,
     tilCount: data.tilCount ?? 0,
-    todoDoneCount: data.todoDoneCount ?? 0,
+    planDoneCount: data.planDoneCount ?? 0,
     total: data.total ?? 0,
   };
 };
+
+function prevDateKey(key: string) {
+  const [y, m, d] = key.split('-').map(Number);
+  // UTC로 만들고 하루 빼서 다시 YYYY-MM-DD
+  const utc = new Date(Date.UTC(y, m - 1, d));
+  utc.setUTCDate(utc.getUTCDate() - 1);
+  return utc.toISOString().slice(0, 10);
+}
+
+async function fetchStreakDays(uid: string): Promise<number> {
+  const todayKey = dateKeyKST();
+
+  // 최근 400일 정도만 읽어도 충분 (1년 스트릭 기준)
+  const statsRef = collection(db, 'users', uid, 'dailyStats');
+  const q = query(
+    statsRef,
+    where('date', '<=', todayKey),
+    orderBy('date', 'desc'),
+    limit(400)
+  );
+
+  const snap = await getDocs(q);
+
+  // 빠른 조회용 map
+  const map = new Map<string, number>();
+  snap.docs.forEach((d) => {
+    const data = d.data() as DailyStat;
+    map.set(data.date, data.total ?? 0);
+  });
+
+  const todayTotal = map.get(todayKey) ?? 0;
+  let cursor = todayTotal > 0 ? todayKey : prevDateKey(todayKey);
+
+  let streak = 0;
+  while ((map.get(cursor) ?? 0) > 0) {
+    streak += 1;
+    cursor = prevDateKey(cursor);
+  }
+
+  return streak;
+}

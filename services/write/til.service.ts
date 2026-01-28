@@ -10,13 +10,19 @@ import {
   getCountFromServer,
 } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
-import { bumpDailyStat } from '@/services/heatmap/dailyStat.service';
+import { recomputeDailyStat } from '@/services/heatmap/dailyStat.service';
+
+function dateKeyKST(date = new Date()) {
+  const kst = new Date(date.getTime() + 9 * 60 * 60 * 1000);
+  return kst.toISOString().slice(0, 10);
+}
 
 export type TilData = {
   title: string;
   content: string;
   createdAt: Timestamp | null;
   updatedAt: Timestamp | null;
+  dateKey: string;
 };
 
 export type Til = TilData & { id: string };
@@ -26,10 +32,11 @@ export async function createTil(uid: string, content: string, title: string) {
   const docRef = await addDoc(tilsCol, {
     title: title,
     content,
+    dateKey: dateKeyKST(),
     createdAt: serverTimestamp(),
     updatedAt: serverTimestamp(),
   });
-  await bumpDailyStat(uid, 1, 0);
+  await recomputeDailyStat(uid);
   await fetchTilCount(uid);
   return docRef.id;
 }
@@ -48,11 +55,13 @@ const parseTilData = (raw: unknown): TilData | null => {
   const title = raw.title;
   if (typeof title !== 'string') return null;
 
-  const createdAt = raw.createdAt instanceof Timestamp ? raw.createdAt : null;
+  const dateKey = raw.dateKey;
+  if (typeof dateKey !== 'string') return null;
 
+  const createdAt = raw.createdAt instanceof Timestamp ? raw.createdAt : null;
   const updatedAt = raw.updatedAt instanceof Timestamp ? raw.updatedAt : null;
 
-  return { title, content, createdAt, updatedAt };
+  return { title, content, dateKey, createdAt, updatedAt };
 };
 
 export const fetchMyTil = async (
@@ -89,6 +98,7 @@ export const updateTil = async (
 
 export const deleteTil = async (uid: string, tilId: string) => {
   await deleteDoc(doc(db, 'users', uid, 'tils', tilId));
+  await recomputeDailyStat(uid);
   await fetchTilCount(uid);
 };
 
