@@ -6,36 +6,45 @@ type CheckItemProps = {
   checked: boolean;
   text: string;
   onToggle: () => void;
+  checkbox?: boolean;
 };
 
-export function CheckItem({ checked, text, onToggle }: CheckItemProps) {
+export function CheckItem({
+  checked,
+  text,
+  onToggle,
+  checkbox,
+}: CheckItemProps) {
   return (
-    <button
-      type="button"
-      onClick={onToggle}
+    <div
+      role="button"
+      onClick={checkbox ? onToggle : undefined}
+      aria-disabled={!checkbox}
       className={[
         'flex w-full items-center gap-2.5 rounded-2xl border px-4 py-2 text-left transition',
         'bg-gray-50 hover:bg-gray-100',
         'border-gray-300',
       ].join(' ')}
     >
-      <div
-        className={[
-          'flex h-6 w-6 items-center justify-center rounded-full border-2 transition',
-          checked ? 'border-green-500' : 'border-gray-400',
-        ].join(' ')}
-      >
-        <Check
+      {checkbox && (
+        <div
           className={[
-            'transition-all',
-            checked
-              ? 'scale-100 text-green-500 opacity-100'
-              : 'scale-50 opacity-0',
+            'flex h-6 w-6 items-center justify-center rounded-full border-2 transition',
+            checked ? 'border-green-500' : 'border-gray-400',
           ].join(' ')}
-          size={16}
-          strokeWidth={4}
-        />
-      </div>
+        >
+          <Check
+            className={[
+              'transition-all',
+              checked
+                ? 'scale-100 text-green-500 opacity-100'
+                : 'scale-50 opacity-0',
+            ].join(' ')}
+            size={16}
+            strokeWidth={4}
+          />
+        </div>
+      )}
       <span
         className={[
           'text-sm',
@@ -44,6 +53,6 @@ export function CheckItem({ checked, text, onToggle }: CheckItemProps) {
       >
         {text}
       </span>
-    </button>
+    </div>
   );
 }
