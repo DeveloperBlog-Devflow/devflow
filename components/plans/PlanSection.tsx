@@ -2,12 +2,14 @@
 
 import { useState, useEffect, useRef } from 'react';
 import {
+  Check,
   ChevronDown,
   ChevronUp,
   Edit2,
   MoreVertical,
   Plus,
   Trash2,
+  X,
 } from 'lucide-react';
 import Card from '../home/Card';
 import TaskItem from './TaskItem';
@@ -26,6 +28,12 @@ interface PlanSectionProps {
   title: string;
   description?: string;
   onDeletePlan: (planId: string, title: string) => void;
+  onUpdatePlan: (
+    planId: string,
+    newTitle: string,
+    newDescription: string
+  ) => void;
+  onChangeStats: () => void;
 }
 
 export default function PlanSection({
@@ -34,14 +42,19 @@ export default function PlanSection({
   title,
   description,
   onDeletePlan,
+  onUpdatePlan,
+  onChangeStats,
 }: PlanSectionProps) {
-  const [isOpen, setIsOpen] = useState(true);
+  const [isOpen, setIsOpen] = useState(false);
   const [tasks, setTasks] = useState<PlanItem[]>([]);
   const [isTasksLoading, setIsTasksLoading] = useState(true);
   const [isAddingTask, setIsAddingTask] = useState(false);
 
-  const [showPlanMenu, setShowPlanMenu] = useState(false);
+  const [isEditingPlan, setIsEditingPlan] = useState(false);
+  const [editTitle, setEditTitle] = useState(title);
+  const [editDesc, setEditDesc] = useState(description || '');
 
+  const [showPlanMenu, setShowPlanMenu] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
 
   // 1. 초기 데이터 로드
@@ -100,6 +113,8 @@ export default function PlanSection({
       // 데이터 최신화: DB 업데이트 후 목록을 다시 불러옵니다.
       const updatedTasks = await fetchPlanItems(userId, planId);
       setTasks(updatedTasks);
+
+      onChangeStats();
     } catch (error) {
       console.error('상태 변경 실패: ', error);
       // 에러 시 원래대로 돌리거나 다시 불러오기
@@ -131,6 +146,8 @@ export default function PlanSection({
     onDeletePlan(planId, title);
 
     setShowPlanMenu(false);
+
+    onChangeStats();
   };
 
   // 5. 하위 항목 삭제 핸들러
@@ -146,6 +163,36 @@ export default function PlanSection({
         console.error(err);
       }
     }
+
+    onChangeStats();
+  };
+
+  // 6. 플랜 수정 핸들러
+  const handleStartEdit = (e: React.MouseEvent) => {
+    e.stopPropagation(); // 아코디언 토글 방지
+
+    setEditTitle(title); // props로 받은 최신값으로 초기화
+    setEditDesc(description || '');
+
+    setIsEditingPlan(true);
+    setShowPlanMenu(false); // 메뉴 닫기
+  };
+
+  // 플랜 수정 핸들러
+  const handleSaveEdit = (e: React.MouseEvent) => {
+    e.stopPropagation();
+
+    // 부모 컴포넌트에게 변경된 내용 전달
+    onUpdatePlan(planId, editTitle, editDesc);
+
+    setIsEditingPlan(false); // 수정 모드 종료
+  };
+
+  // 7. 플랜 수정 취소 핸들러
+  const handleCancelEdit = (e: React.MouseEvent) => {
+    e.stopPropagation();
+
+    setIsEditingPlan(false); // 수정 모드 종료
   };
 
   // 완료된 할 일 개수 계산
@@ -162,15 +209,54 @@ export default function PlanSection({
     <Card className="mb-4 transition-all duration-200">
       {/* 헤더 영역 */}
       <div
-        className="flex cursor-pointer items-start justify-between"
-        onClick={() => setIsOpen(!isOpen)}
+        className="flex cursor-pointer items-center justify-between"
+        onClick={() => !isEditingPlan && setIsOpen(!isOpen)}
       >
-        <div>
-          <h3 className="text-xl font-bold text-gray-900">{title}</h3>
-          <p className="mt-1 text-sm text-gray-500">{description}</p>
-        </div>
+        {isEditingPlan ? (
+          <div
+            className="flex cursor-default flex-col gap-2"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* 제목 입력창 */}
+            <input
+              type="text"
+              value={editTitle}
+              onChange={(e) => setEditTitle(e.target.value)}
+              className="w-full border-b-2 border-[#556BD6] bg-transparent text-xl font-bold text-gray-900 focus:outline-none"
+              placeholder="플랜 제목"
+              autoFocus
+            />
+            {/* 설명 입력창 */}
+            <input
+              type="text"
+              value={editDesc}
+              onChange={(e) => setEditDesc(e.target.value)}
+              className="w-full border-b border-gray-300 bg-transparent text-sm text-gray-600 focus:border-[#556BD6] focus:outline-none"
+              placeholder="설명 (선택사항)"
+            />
+            <div className="mt-1 flex gap-2">
+              <button
+                onClick={handleSaveEdit}
+                className="flex items-center gap-1 rounded bg-[#556BD6] px-2 py-1 text-xs text-white transition-colors hover:bg-[#4456a8]"
+              >
+                <Check size={12} /> 저장
+              </button>
+              <button
+                onClick={handleCancelEdit}
+                className="flex items-center gap-1 rounded bg-gray-200 px-2 py-1 text-xs text-gray-600 transition-colors hover:bg-gray-300"
+              >
+                <X size={12} /> 취소
+              </button>
+            </div>
+          </div>
+        ) : (
+          <div>
+            <h3 className="text-xl font-bold text-gray-900">{title}</h3>
+            <p className="mt-1 text-sm text-gray-500">{description}</p>
+          </div>
+        )}
 
-        <div className="flex items-center gap-4">
+        <div className="flex items-center justify-center gap-4">
           <div className="text-right">
             <span className="block text-xs text-gray-500">진행률</span>
             <span className="text-lg font-bold text-[#556BD6]">
@@ -193,10 +279,7 @@ export default function PlanSection({
               <div className="absolute top-8 right-0 w-32 overflow-hidden rounded-lg border border-gray-100 bg-white py-1 shadow-lg">
                 <button
                   className="flex w-full items-center gap-2 px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-50"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    alert('플랜 수정 기능');
-                  }}
+                  onClick={handleStartEdit}
                 >
                   <Edit2 size={14} /> 수정
                 </button>

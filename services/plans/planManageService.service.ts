@@ -28,7 +28,7 @@ export interface PlanItem {
   planId: string;
   text: string;
   isChecked: boolean;
-  deadline: Date;
+  deadline?: Date;
   createdAt: Date;
 }
 
@@ -145,7 +145,32 @@ export const deletePlanItem = async (uid: string, itemId: string) => {
   await deleteDoc(itemRef);
 };
 
-// 8. 하위 항목 수정 (제목, 설명, 마감일)
+// 8. 플랜 수정 (제목, 설명)
+export const updatePlan = async (
+  uid: string,
+  planId: string,
+  updates: { title?: string; description?: string }
+) => {
+  const planRef = doc(db, 'users', uid, 'plans', planId);
+
+  const updatePayload: {
+    title?: string;
+    description?: string;
+  } = {};
+
+  if (updates.title !== undefined) {
+    updatePayload.title = updates.title;
+  }
+  if (updates.description !== undefined) {
+    updatePayload.description = updates.description;
+  }
+
+  if (Object.keys(updatePayload).length > 0) {
+    await updateDoc(planRef, updatePayload);
+  }
+};
+
+// 9. 하위 항목 수정 (제목, 설명, 마감일)
 export const updatePlanItem = async (
   uid: string,
   itemId: string,
@@ -187,6 +212,22 @@ export const updatePlanItem = async (
   }
 };
 
+// 10. 하위 항목 모두 가져오기
+export const fetchAllPlanItems = async (uid: string): Promise<PlanItem[]> => {
+  const allPlanItemsRef = collection(db, 'users', uid, 'planItems');
+  const q = query(allPlanItemsRef);
+  const snapshot = await getDocs(q);
+
+  return snapshot.docs.map((doc) => {
+    const data = doc.data();
+    return {
+      id: doc.id,
+      ...data,
+      createdAt: data.createdAt?.toDate(),
+      deadline: data.deadline?.toDate() ?? null,
+    };
+  }) as PlanItem[];
+};
 // 오늘의 할일 가져오기
 export const fetchTodayPlanItems = async (uid: string): Promise<PlanItem[]> => {
   const itemsRef = collection(db, 'users', uid, 'planItems');
