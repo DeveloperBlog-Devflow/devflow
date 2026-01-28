@@ -168,12 +168,16 @@ const Page = () => {
         await fetchAndCalculate(user.uid);
 
         // 페이지 조절
+        const newFilteredLength = fetchedPlans.filter((plan) =>
+          plan.title.toLowerCase().includes(searchQuery.toLowerCase())
+        ).length;
+
         if (
-          currentPage > Math.ceil((plans.length - 1) / itemsPerPage) &&
-          Math.ceil((plans.length - 1) / itemsPerPage) > 0
+          currentPage > Math.ceil(newFilteredLength / itemsPerPage) &&
+          Math.ceil(newFilteredLength / itemsPerPage) > 0
         ) {
-          setCurrentPage(Math.ceil((plans.length - 1) / itemsPerPage));
-        } else if (Math.ceil((plans.length - 1) / itemsPerPage) === 0) {
+          setCurrentPage(Math.ceil(newFilteredLength / itemsPerPage));
+        } else if (Math.ceil(newFilteredLength / itemsPerPage) === 0) {
           setCurrentPage(1);
         }
       } catch (err) {
