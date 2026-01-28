@@ -16,9 +16,10 @@ export function CheckItem({
   checkbox,
 }: CheckItemProps) {
   return (
-    <button
-      type="button"
-      onClick={onToggle}
+    <div
+      role="button"
+      onClick={checkbox ? onToggle : undefined}
+      aria-disabled={!checkbox}
       className={[
         'flex w-full items-center gap-2.5 rounded-2xl border px-4 py-2 text-left transition',
         'bg-gray-50 hover:bg-gray-100',
@@ -52,6 +53,6 @@ export function CheckItem({
       >
         {text}
       </span>
-    </button>
+    </div>
   );
 }

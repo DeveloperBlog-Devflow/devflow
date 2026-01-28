@@ -10,7 +10,7 @@ type CheckableItem = {
 
 type CheckListProps<T extends CheckableItem> = {
   items: T[];
-  onToggleTodo: (id: string, checked: boolean) => void;
+  onToggleTodo: (id: string, current: boolean) => void;
   emptyText?: string;
   checkbox?: boolean;
 };
