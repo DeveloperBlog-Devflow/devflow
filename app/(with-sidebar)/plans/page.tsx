@@ -38,6 +38,8 @@ const Page = () => {
     completed: 0, // 완료됨
   });
 
+  const [searchQuery, setSearchQuery] = useState('');
+
   // 카드 업데이트를 위한 stats 가져오기 메서드
   const fetchAndCalculate = async (
     uid: string,
@@ -202,11 +204,21 @@ const Page = () => {
     }
   };
 
+  // 검색 로직
+  const filteredPlans = plans.filter((plan) =>
+    plan.title.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
   // 페이지네이션 파트
-  const totalPages = Math.ceil(plans.length / itemsPerPage);
+  const totalPages = Math.ceil(filteredPlans.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
-  const paginatedPlans = plans.slice(startIndex, endIndex);
+  const paginatedPlans = filteredPlans.slice(startIndex, endIndex);
+
+  const handleSearch = (query: string) => {
+    setSearchQuery(query);
+    setCurrentPage(1); // 검색 결과가 바뀌면 첫 페이지로 리셋
+  };
 
   useEffect(() => {
     if (currentPage > totalPages && totalPages > 0) {
@@ -214,7 +226,7 @@ const Page = () => {
     } else if (totalPages === 0 && currentPage !== 1) {
       setCurrentPage(1);
     }
-  }, [plans.length, totalPages, currentPage]);
+  }, [totalPages, currentPage]);
 
   return (
     <div className="bg-background min-h-screen p-11">
@@ -277,7 +289,7 @@ const Page = () => {
       </div>
 
       {/* 검색 바 */}
-      <SearchBar />
+      <SearchBar value={searchQuery} onChange={handleSearch} />
 
       {/* 하단 추가 버튼 or 인라인 폼 */}
       <div className="mt-6 mb-4">
