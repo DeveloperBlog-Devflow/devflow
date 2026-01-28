@@ -218,10 +218,13 @@ export const fetchAllPlanItems = async (uid: string): Promise<PlanItem[]> => {
   const q = query(allPlanItemsRef);
   const snapshot = await getDocs(q);
 
-  return snapshot.docs.map((doc) => ({
-    id: doc.id,
-    planId: doc.data().planId,
-    isChecked: doc.data().isChecked,
-    ...doc.data(),
-  })) as PlanItem[];
+  return snapshot.docs.map((doc) => {
+    const data = doc.data();
+    return {
+      id: doc.id,
+      ...data,
+      createdAt: data.createdAt?.toDate(),
+      deadline: data.deadline?.toDate() ?? null,
+    };
+  }) as PlanItem[];
 };

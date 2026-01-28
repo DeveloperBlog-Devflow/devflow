@@ -39,13 +39,15 @@ const Page = () => {
   });
 
   // 카드 업데이트를 위한 stats 가져오기 메서드
-  const fetchAndCalculate = async (uid: string) => {
+  const fetchAndCalculate = async (
+    uid: string,
+    preload?: { plans: Plan[]; items: PlanItem[] }
+  ) => {
     try {
       // 1. 데이터 병렬 로드
-      const [fetchedPlans, fetchedItems] = await Promise.all([
-        fetchPlans(uid),
-        fetchAllPlanItems(uid),
-      ]);
+      const [fetchedPlans, fetchedItems] = preload
+        ? [preload.plans, preload.items]
+        : await Promise.all([fetchPlans(uid), fetchAllPlanItems(uid)]);
 
       setPlans(fetchedPlans); // 플랜 목록 업데이트
 
@@ -57,7 +59,7 @@ const Page = () => {
         const myItems = fetchedItems.filter(
           (item: PlanItem) => item.planId === plan.id
         );
-        // ⚠️ 하위 항목이 하나라도 있는 경우에만 상태를 판별합니다.
+        // 하위 항목이 하나라도 있는 경우에만
         if (myItems.length > 0) {
           const isAllChecked = myItems.every(
             (item: PlanItem) => item.isChecked
@@ -97,7 +99,10 @@ const Page = () => {
           setPlans(fetchedPlans);
           setCurrentPage(1);
 
-          await fetchAndCalculate(currentUser.uid);
+          await fetchAndCalculate(currentUser.uid, {
+            plans: fetchedPlans,
+            items: fetchedItems,
+          });
         } catch (err) {
           console.error('플랜 목록 로딩 실패:', err);
           setPlans([]);
