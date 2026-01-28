@@ -186,3 +186,34 @@ export const updatePlanItem = async (
     await updateDoc(itemRef, updatePayload);
   }
 };
+
+export const fetchTodayPlanItems = async (uid: string): Promise<PlanItem[]> => {
+  const itemsRef = collection(db, 'users', uid, 'planItems');
+
+  // KST 기준 오늘 00:00 ~ 내일 00:00
+  const now = new Date();
+  const kst = new Date(now.getTime() + 9 * 60 * 60 * 1000);
+  const startKST = new Date(kst.getFullYear(), kst.getMonth(), kst.getDate());
+  const start = new Date(startKST.getTime() - 9 * 60 * 60 * 1000);
+  const end = new Date(start.getTime() + 24 * 60 * 60 * 1000);
+
+  const q = query(
+    itemsRef,
+    where('deadline', '>=', Timestamp.fromDate(start)),
+    where('deadline', '<', Timestamp.fromDate(end)),
+    orderBy('deadline', 'asc'),
+    orderBy('createdAt', 'asc')
+  );
+
+  const snapshot = await getDocs(q);
+
+  return snapshot.docs.map((docSnap) => {
+    const data = docSnap.data();
+    return {
+      id: docSnap.id,
+      ...data,
+      createdAt: data.createdAt?.toDate(),
+      deadline: data.deadline?.toDate(),
+    };
+  }) as PlanItem[];
+};

@@ -1,14 +1,9 @@
 'use client';
 
-import { useState } from 'react';
-import Card from './Card';
-import CheckList from './CheckList';
-import { Todo } from '@/services/home/todoService.service';
-
+import TodayPlanContainer from './TodayPlanContainer';
 interface BottomSectionProps {
+  uid: string;
   className?: string;
-  todos: Todo[];
-  onToggleTodo: (id: string, currentStatus: boolean) => void;
 }
 
 // const TODAY_DUMMY = [
@@ -22,11 +17,7 @@ interface BottomSectionProps {
 //   { id: 'u2', text: '포트폴리오 리팩토링', isChecked: false },
 // ];
 
-export default function BottomSection({
-  className,
-  todos,
-  onToggleTodo,
-}: BottomSectionProps) {
+export default function BottomSection({ className, uid }: BottomSectionProps) {
   // const [today, setToday] = useState<ChecklistItem[]>(TODAY_DUMMY);
   // const [upcoming, setUpcoming] = useState<ChecklistItem[]>(UPCOMING_DUMMY);
 
@@ -48,13 +39,7 @@ export default function BottomSection({
 
   return (
     <div className={className}>
-      <Card title="오늘 할 일">
-        <CheckList
-          items={todos}
-          onToggleTodo={onToggleTodo}
-          emptyText="오늘 할 일이 없습니다"
-        />
-      </Card>
+      <TodayPlanContainer uid={uid}></TodayPlanContainer>
 
       {/* <Card title="다가오는 일정">
         <CheckList

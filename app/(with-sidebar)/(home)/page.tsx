@@ -104,8 +104,7 @@ const Page = () => {
       {/* 2-3. BottomSection */}
       <BottomSection
         className="grid grid-cols-1 gap-4 md:grid-cols-2"
-        todos={todos}
-        onToggleTodo={handleToggleTodo}
+        uid={currentUser.uid}
       />
 
       {/* 3. ButtonSection */}
