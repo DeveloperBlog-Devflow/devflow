@@ -27,7 +27,7 @@ export default function GrassHeatmap({ uid }: Props) {
   }, [endDate]);
 
   const [values, setValues] = useState<
-    { date: string; total: number; tilCount?: number; todoDoneCount?: number }[]
+    { date: string; total: number; tilCount?: number; planDoneCount?: number }[]
   >([]);
 
   useEffect(() => {
@@ -41,12 +41,12 @@ export default function GrassHeatmap({ uid }: Props) {
   const byDate = useMemo(() => {
     const m = new Map<
       string,
-      { tilCount: number; todoDoneCount: number; total: number }
+      { tilCount: number; planDoneCount: number; total: number }
     >();
     for (const s of values) {
       m.set(s.date, {
         tilCount: s.tilCount ?? 0,
-        todoDoneCount: s.todoDoneCount ?? 0,
+        planDoneCount: s.planDoneCount ?? 0,
         total: s.total ?? 0,
       });
     }
@@ -81,7 +81,7 @@ export default function GrassHeatmap({ uid }: Props) {
               const d = byDate.get(value.date);
 
               const til = d?.tilCount ?? 0;
-              const todo = d?.todoDoneCount ?? 0;
+              const todo = d?.planDoneCount ?? 0;
               const total = d?.total ?? 0;
 
               return {
