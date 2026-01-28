@@ -76,6 +76,7 @@ const Page = () => {
 
       {/* 2-3. BottomSection */}
       <BottomSection
+        uid={currentUser.uid}
         className="grid grid-cols-1 gap-4 md:grid-cols-2"
         items={items}
         loading={planLoading}

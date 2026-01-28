@@ -187,6 +187,7 @@ export const updatePlanItem = async (
   }
 };
 
+// 오늘의 할일 가져오기
 export const fetchTodayPlanItems = async (uid: string): Promise<PlanItem[]> => {
   const itemsRef = collection(db, 'users', uid, 'planItems');
 
@@ -216,4 +217,36 @@ export const fetchTodayPlanItems = async (uid: string): Promise<PlanItem[]> => {
       deadline: data.deadline?.toDate(),
     };
   }) as PlanItem[];
+};
+
+// 다가오는 일정 가져오기
+export const fetchUpcomingPlanItems = async (
+  uid: string,
+  fromDate: Date
+): Promise<PlanItem[]> => {
+  const itemsRef = collection(db, 'users', uid, 'planItems');
+
+  const q = query(
+    itemsRef,
+    where('deadline', '>=', Timestamp.fromDate(fromDate))
+  );
+
+  const snapshot = await getDocs(q);
+
+  const items = snapshot.docs.map((d) => {
+    const data = d.data();
+    return {
+      id: d.id,
+      ...data,
+      createdAt: data.createdAt?.toDate?.() ?? new Date(),
+      deadline: data.deadline?.toDate?.() ?? new Date(),
+    } as PlanItem;
+  });
+
+  //정렬
+  items.sort(
+    (a, b) => +a.deadline - +b.deadline || +a.createdAt - +b.createdAt
+  );
+
+  return items;
 };

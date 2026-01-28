@@ -36,7 +36,6 @@ export const useTodayPlanItems = (uid?: string) => {
     [completed, total]
   );
 
-  // ✅ 토글만
   const toggle = useCallback(
     async (id: string, current: boolean) => {
       if (!uid) return;
@@ -71,5 +70,6 @@ export const useTodayPlanItems = (uid?: string) => {
     error,
     toggle,
     progressText,
+    total,
   };
 };

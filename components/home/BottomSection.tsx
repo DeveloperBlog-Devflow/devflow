@@ -1,9 +1,13 @@
 'use client';
 
 import TodayPlanContainer from './TodayPlanContainer';
+import UpcomingPlanContainer from '@/components/home/UpcomingPlanContainer';
 import type { PlanItem } from '@/services/plans/planManageService.service';
+import { useTodayPlanItems } from '@/hooks/useTodayPlanItems';
+import { useUpcomingPlanItems } from '@/hooks/useUpcomingPlanItems';
 
 interface BottomSectionProps {
+  uid: string;
   className?: string;
   items: PlanItem[];
   loading: boolean;
@@ -12,16 +16,19 @@ interface BottomSectionProps {
 }
 
 export default function BottomSection({
+  uid,
   className,
   items,
   loading,
   error,
   onToggle,
 }: BottomSectionProps) {
-
+  const today = useTodayPlanItems(uid);
+  const upcoming = useUpcomingPlanItems(uid);
 
   return (
     <div className={className}>
+      {/* 오늘의 목표 */}
       <TodayPlanContainer
         items={items}
         loading={loading}
@@ -29,13 +36,13 @@ export default function BottomSection({
         onToggle={onToggle}
       ></TodayPlanContainer>
 
-      {/* <Card title="다가오는 일정">
-        <CheckList
-          items={upcoming}
-          onToggle={toggleUpcoming}
-          emptyText="다가오는 일정이 없습니다"
-        />
-      </Card> */}
+      {/* 다가오는 일정 */}
+      <UpcomingPlanContainer
+        items={upcoming.items}
+        loading={upcoming.loading}
+        error={upcoming.error}
+        limit={today.total}
+      />
     </div>
   );
 }
