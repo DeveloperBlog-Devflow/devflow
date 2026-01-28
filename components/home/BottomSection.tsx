@@ -1,14 +1,16 @@
 'use client';
 
-import { useState } from 'react';
+// import { useState } from 'react';
 import Card from './Card';
 import CheckList from './CheckList';
-import { Todo } from '@/services/home/todoService.service';
+// import { Todo } from '@/services/home/todoService.service';
+import TodoContainer from './TodoContainer';
 
 interface BottomSectionProps {
   className?: string;
-  todos: Todo[];
-  onToggleTodo: (id: string, currentStatus: boolean) => void;
+  // todos: Todo[];
+  // onToggleTodo: (id: string, currentStatus: boolean) => void;
+  uid: string;
 }
 
 // const TODAY_DUMMY = [
@@ -24,8 +26,9 @@ interface BottomSectionProps {
 
 export default function BottomSection({
   className,
-  todos,
-  onToggleTodo,
+  uid,
+  // todos,
+  // onToggleTodo,
 }: BottomSectionProps) {
   // const [today, setToday] = useState<ChecklistItem[]>(TODAY_DUMMY);
   // const [upcoming, setUpcoming] = useState<ChecklistItem[]>(UPCOMING_DUMMY);
@@ -48,13 +51,7 @@ export default function BottomSection({
 
   return (
     <div className={className}>
-      <Card title="오늘 할 일">
-        <CheckList
-          items={todos}
-          onToggleTodo={onToggleTodo}
-          emptyText="오늘 할 일이 없습니다"
-        />
-      </Card>
+      <TodoContainer uid={uid}></TodoContainer>
 
       {/* <Card title="다가오는 일정">
         <CheckList

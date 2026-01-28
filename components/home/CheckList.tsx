@@ -12,6 +12,8 @@ type CheckListProps = {
   showAdd?: boolean;
   onAdd?: (text: string) => void;
   onCancelAdd?: () => void;
+  onRemoveTodo: (id: string) => void;
+  onEditTodoText: (id: string, text: string) => void;
 };
 
 export default function CheckList({
@@ -19,8 +21,8 @@ export default function CheckList({
   onToggleTodo,
   showAdd,
   onAdd,
-  onCancelAdd,
-  emptyText = '아직 항목이 없습니다',
+  onRemoveTodo,
+  onEditTodoText,
 }: CheckListProps) {
   const [draft, setDraft] = useState('');
 
@@ -67,6 +69,10 @@ export default function CheckList({
           onToggle={() => {
             onToggleTodo(item.id, item.isChecked);
           }}
+          onDelete={() => {
+            onRemoveTodo(item.id);
+          }}
+          onEdit={(nextText) => onEditTodoText(item.id, nextText)}
         />
       ))}
     </div>

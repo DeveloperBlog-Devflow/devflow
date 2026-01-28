@@ -12,8 +12,16 @@ type Props = {
 };
 
 export default function TodoContainer({ uid }: Props) {
-  const { todos, loading, error, loadTodos, toggleTodo, createTodo } =
-    useTodos(uid);
+  const {
+    todos,
+    loading,
+    error,
+    loadTodos,
+    toggleTodo,
+    createTodo,
+    removeTodo,
+    editTodoText,
+  } = useTodos(uid);
   const [showAddTodo, setShowAddTodo] = useState(false);
   useEffect(() => {
     loadTodos();
@@ -50,6 +58,8 @@ export default function TodoContainer({ uid }: Props) {
             await createTodo(text);
             setShowAddTodo(false);
           }}
+          onRemoveTodo={removeTodo}
+          onEditTodoText={editTodoText}
           onCancelAdd={() => setShowAddTodo(false)}
         />
       </Card>
