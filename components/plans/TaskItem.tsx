@@ -28,7 +28,13 @@ export default function TaskItem({
   const formatDate = (d: string | Date | undefined) => {
     if (!d) return '';
     if (typeof d === 'string') return d;
-    return d.toISOString().split('T')[0]; // YYYY-MM-DD 형식
+
+    // 로컬 시간 메서드 사용 (시차 방지)
+    const year = d.getFullYear();
+    const month = String(d.getMonth() + 1).padStart(2, '0');
+    const day = String(d.getDate()).padStart(2, '0');
+
+    return `${year}-${month}-${day}`;
   };
 
   // 1-2. 마우스 클릭 감지

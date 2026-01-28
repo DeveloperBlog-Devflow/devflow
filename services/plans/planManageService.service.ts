@@ -28,7 +28,7 @@ export interface PlanItem {
   planId: string;
   text: string;
   isChecked: boolean;
-  deadline: Date;
+  deadline?: Date;
   createdAt: Date;
 }
 
