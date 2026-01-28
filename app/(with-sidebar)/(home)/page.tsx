@@ -8,49 +8,23 @@ import ButtonSection from '@/components/home/ButtonSection';
 
 import { useEffect, useState } from 'react';
 import { useAuthUser } from '@/hooks/useAuthUser';
-
-import {
-  Todo,
-  fetchTodos,
-  AddTodo,
-  toggleTodoStatus,
-} from '@/services/home/todoService.service';
+import { useTodayPlanItems } from '@/hooks/useTodayPlanItems';
 import { getProfile, Profile } from '@/services/home/profileService.service';
 
 const Page = () => {
   // 현재 사용자 정보
   const { user: currentUser, authLoading } = useAuthUser();
-
   const [profile, setProfile] = useState<Profile | null>(null);
-  const [todos, setTodos] = useState<Todo[]>([]);
   const [error, setError] = useState<string | null>(null);
 
-  // 1. 할 일 목록 불러오기
-  const loadTodos = async (uid: string) => {
-    try {
-      setError(null);
-
-      const fetchedTodos = await fetchTodos(uid);
-      setTodos(fetchedTodos);
-    } catch (err) {
-      console.error(err);
-      setError('데이터를 불러오는 데 실패하였습니다');
-    }
-  };
-
-  // 3. 할 일 상태 토글
-  const handleToggleTodo = async (id: string, currentStatus: boolean) => {
-    if (!currentUser) return;
-    try {
-      setError(null);
-
-      await toggleTodoStatus(currentUser.uid, id, currentStatus);
-      await loadTodos(currentUser.uid);
-    } catch (err) {
-      console.error(err);
-      setError('상태를 업데이트하는 데 실패하였습니다');
-    }
-  };
+  const {
+    items,
+    loading: planLoading,
+    error: planError,
+    toggle,
+    progressText,
+    total,
+  } = useTodayPlanItems(currentUser?.uid);
 
   // 사용자가 존재하면 데이터 불러옴
   useEffect(() => {
@@ -59,7 +33,6 @@ const Page = () => {
       try {
         const userProfile = await getProfile(currentUser.uid);
         setProfile(userProfile);
-        await loadTodos(currentUser.uid);
       } catch (err) {
         console.error(err);
         setError('프로필 정보를 불러오는 데 실패하였습니다');
@@ -96,6 +69,7 @@ const Page = () => {
         className="grid grid-cols-1 gap-4 md:grid-cols-3"
         profile={profile}
         uid={currentUser.uid}
+        progressText={progressText}
       />
 
       {/* 2-2. GraphSection */}
@@ -103,9 +77,13 @@ const Page = () => {
 
       {/* 2-3. BottomSection */}
       <BottomSection
+        uid={currentUser.uid}
         className="grid grid-cols-1 gap-4 md:grid-cols-2"
-        todos={todos}
-        onToggleTodo={handleToggleTodo}
+        items={items}
+        loading={planLoading}
+        error={planError}
+        onToggle={toggle}
+        todoTotal={total}
       />
 
       {/* 3. ButtonSection */}
