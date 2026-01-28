@@ -3,7 +3,6 @@
 import TodayPlanContainer from './TodayPlanContainer';
 import UpcomingPlanContainer from '@/components/home/UpcomingPlanContainer';
 import type { PlanItem } from '@/services/plans/planManageService.service';
-import { useTodayPlanItems } from '@/hooks/useTodayPlanItems';
 import { useUpcomingPlanItems } from '@/hooks/useUpcomingPlanItems';
 
 interface BottomSectionProps {
@@ -13,6 +12,7 @@ interface BottomSectionProps {
   loading: boolean;
   error: string | null;
   onToggle: (id: string, checked: boolean) => void;
+  todoTotal: number;
 }
 
 export default function BottomSection({
@@ -22,8 +22,8 @@ export default function BottomSection({
   loading,
   error,
   onToggle,
+  todoTotal,
 }: BottomSectionProps) {
-  const today = useTodayPlanItems(uid);
   const upcoming = useUpcomingPlanItems(uid);
 
   return (
@@ -41,7 +41,7 @@ export default function BottomSection({
         items={upcoming.items}
         loading={upcoming.loading}
         error={upcoming.error}
-        limit={today.total}
+        limit={todoTotal}
       />
     </div>
   );

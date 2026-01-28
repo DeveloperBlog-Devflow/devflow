@@ -23,6 +23,7 @@ const Page = () => {
     error: planError,
     toggle,
     progressText,
+    total,
   } = useTodayPlanItems(currentUser?.uid);
 
   // 사용자가 존재하면 데이터 불러옴
@@ -82,6 +83,7 @@ const Page = () => {
         loading={planLoading}
         error={planError}
         onToggle={toggle}
+        todoTotal={total}
       />
 
       {/* 3. ButtonSection */}
