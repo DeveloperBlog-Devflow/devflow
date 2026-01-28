@@ -14,7 +14,7 @@ const startOfTomorrowKST = () => {
   const d = kst.getUTCDate();
 
   // 내일 00:00 KST => UTC로 다시 변환(= -9h)
-  const tomorrowKSTMidnightUTC = new Date(Date.UTC(y, m, d + 2, 0, 0, 0));
+  const tomorrowKSTMidnightUTC = new Date(Date.UTC(y, m, d + 1, 0, 0, 0));
   const backToLocal = new Date(
     tomorrowKSTMidnightUTC.getTime() - 9 * 60 * 60 * 1000
   );
