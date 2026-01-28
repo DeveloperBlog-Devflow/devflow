@@ -26,7 +26,6 @@ export const useTodayPlanItems = (uid?: string) => {
     }
   }, [uid]);
 
-  // ✅ 진행률 계산
   const total = useMemo(() => items.length, [items]);
   const completed = useMemo(
     () => items.reduce((acc, it) => acc + (it.isChecked ? 1 : 0), 0),
