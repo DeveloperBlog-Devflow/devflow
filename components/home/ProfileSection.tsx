@@ -7,11 +7,19 @@ interface ProfileSectionProps {
   className?: string;
   profile: Profile | null;
   uid: string;
+  progressText: string;
 }
 
-const ProfileSection = ({ className, profile, uid }: ProfileSectionProps) => {
+const ProfileSection = ({
+  className,
+  profile,
+  uid,
+  progressText,
+}: ProfileSectionProps) => {
   const icon = getRandomProfileIcon(uid);
   const avatarUrl = profile?.avatar_url;
+
+  // const goalText = totalTodos === 0 ? '0/0' : `${completedTodos}/${totalTodos}`;
 
   return (
     <div className={className}>
@@ -49,7 +57,9 @@ const ProfileSection = ({ className, profile, uid }: ProfileSectionProps) => {
 
       <div className="md:col-span-1">
         <Card className="flex h-full flex-col items-center justify-center text-center">
-          <div className="text-primary mb-1 text-4xl font-bold">3/5</div>
+          <div className="text-primary mb-1 text-4xl font-bold">
+            {progressText}
+          </div>
           <div className="text-sm font-medium text-gray-500">
             오늘의 목표 달성률
           </div>

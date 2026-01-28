@@ -4,28 +4,32 @@
 import { useEffect, useState } from 'react';
 import Card from '@/components/home/Card';
 import CheckList from '@/components/home/CheckList';
-import { useTodos } from '@/hooks/useTodos';
 import { HiPlus } from 'react-icons/hi';
+import type { Todo } from '@/services/home/todoService.service';
 
 type Props = {
   uid: string;
+
+  todos: Todo[];
+  loading?: boolean;
+  error?: string | null;
+
+  onToggleTodo: (id: string, currentStatus: boolean) => Promise<void> | void;
+  onAddTodo: (text: string) => Promise<void> | void;
+  onRemoveTodo: (id: string) => Promise<void> | void;
+  onEditTodoText: (id: string, text: string) => Promise<void> | void;
 };
 
-export default function TodoContainer({ uid }: Props) {
-  const {
-    todos,
-    loading,
-    error,
-    loadTodos,
-    toggleTodo,
-    createTodo,
-    removeTodo,
-    editTodoText,
-  } = useTodos(uid);
+export default function TodoContainer({
+  todos,
+  loading,
+  error,
+  onToggleTodo,
+  onAddTodo,
+  onRemoveTodo,
+  onEditTodoText,
+}: Props) {
   const [showAddTodo, setShowAddTodo] = useState(false);
-  useEffect(() => {
-    loadTodos();
-  }, [loadTodos]);
 
   if (loading) {
     return <div className="text-sm text-gray-400">할 일 불러오는 중...</div>;
@@ -51,15 +55,15 @@ export default function TodoContainer({ uid }: Props) {
       >
         <CheckList
           items={todos}
-          onToggleTodo={toggleTodo}
+          onToggleTodo={onToggleTodo}
           emptyText="오늘 할 일이 없습니다"
           showAdd={showAddTodo}
           onAdd={async (text) => {
-            await createTodo(text);
+            await onAddTodo(text);
             setShowAddTodo(false);
           }}
-          onRemoveTodo={removeTodo}
-          onEditTodoText={editTodoText}
+          onRemoveTodo={onRemoveTodo}
+          onEditTodoText={onEditTodoText}
           onCancelAdd={() => setShowAddTodo(false)}
         />
       </Card>

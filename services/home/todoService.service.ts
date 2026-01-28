@@ -48,13 +48,15 @@ export const fetchTodos = async (
 };
 
 // 2. 할 일 추가하기
-export const addTodo = async (uid: string, text: string) => {
-  await addDoc(collection(db, 'users', uid, 'todos'), {
+export const addTodo = async (uid: string, text: string): Promise<string> => {
+  const ref = await addDoc(collection(db, 'users', uid, 'todos'), {
     text,
     isChecked: false,
     dateKey: dateKeyKST(),
     createdAt: Timestamp.now(),
   });
+
+  return ref.id;
 };
 
 // 3. 할 일 삭제하기

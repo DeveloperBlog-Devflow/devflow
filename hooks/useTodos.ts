@@ -31,7 +31,18 @@ export const useTodos = (uid?: string) => {
     }
   }, [uid, todayKey]);
 
-  // ✅ 추가: 일단 화면에 바로 추가(낙관적), 이후 서버와 동기화는 선택
+  const totalTodos = useMemo(() => todos.length, [todos]);
+
+  const completedTodos = useMemo(
+    () => todos.reduce((acc, t) => acc + (t.isChecked ? 1 : 0), 0),
+    [todos]
+  );
+
+  const progressText = useMemo(
+    () => `${completedTodos}/${totalTodos || 0}`,
+    [completedTodos, totalTodos]
+  );
+
   const createTodo = useCallback(
     async (text: string) => {
       if (!uid) return;
@@ -40,7 +51,6 @@ export const useTodos = (uid?: string) => {
 
       setError(null);
 
-      // 임시 아이템 (서버 id 나오기 전까지)
       const tempId = `temp_${Date.now()}`;
       const optimistic: Todo = {
         id: tempId,
@@ -49,26 +59,35 @@ export const useTodos = (uid?: string) => {
         createdAt: new Date(),
       };
 
-      // UI 즉시 반영
       setTodos((prev) => [...prev, optimistic]);
 
+      let newId: string;
       try {
-        await addTodo(uid, trimmed);
+        newId = await addTodo(uid, trimmed);
+      } catch (e) {
+        console.error(e);
+        setTodos((prev) => prev.filter((t) => t.id !== tempId));
+        setError('할 일을 추가하는 데 실패했습니다.');
+        return;
+      }
 
-        // 여기서만 실제 데이터로 동기화(리스트 안 비게 유지됨)
-        const data = await fetchTodos(uid, todayKey);
+      setTodos((prev) =>
+        prev.map((t) => (t.id === tempId ? { ...t, id: newId } : t))
+      );
+
+      try {
+        const freshKey = dateKeyKST(new Date()); 
+        const data = await fetchTodos(uid, freshKey);
         setTodos(data);
       } catch (e) {
         console.error(e);
-        // 실패 시 롤백
-        setTodos((prev) => prev.filter((t) => t.id !== tempId));
-        setError('할 일을 추가하는 데 실패했습니다.');
+        setError('추가 후 동기화에 실패했습니다. 잠시 후 다시 시도해주세요.');
       }
     },
-    [uid, todayKey]
+    [uid]
   );
 
-  // ✅ 토글: 로컬 먼저 뒤집고, 실패하면 롤백
+
   const toggleTodo = useCallback(
     async (id: string, currentStatus: boolean) => {
       if (!uid) return;
@@ -94,7 +113,7 @@ export const useTodos = (uid?: string) => {
     [uid]
   );
 
-  // ✅ 삭제: 로컬에서 먼저 빼고, 실패하면 복구
+  // 삭제: 로컬에서 먼저 빼고, 실패하면 복구
   const removeTodo = useCallback(
     async (id: string) => {
       if (!uid) return;
@@ -121,7 +140,6 @@ export const useTodos = (uid?: string) => {
     [uid]
   );
 
-  // ✅ 수정: 로컬 먼저 바꾸고, 실패하면 롤백
   const editTodoText = useCallback(
     async (id: string, text: string) => {
       if (!uid) return;
@@ -163,9 +181,10 @@ export const useTodos = (uid?: string) => {
     loading,
     error,
     todayKey,
+    progressText,
     loadTodos,
     toggleTodo,
-    createTodo, // ✅ 네 TodoContainer에서 쓰던 이름 그대로
+    createTodo,
     removeTodo,
     editTodoText,
   };

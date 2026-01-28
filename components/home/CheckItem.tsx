@@ -48,9 +48,16 @@ export function CheckItem({
         'border-gray-300',
       ].join(' ')}
     >
-      <button
-        type="button"
+      <div
+        role="button"
+        tabIndex={0}
         onClick={onToggle}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            onToggle();
+          }
+        }}
         className="flex flex-1 items-center gap-2.5 text-left"
       >
         <div
@@ -104,7 +111,7 @@ export function CheckItem({
             {text}
           </span>
         )}
-      </button>
+      </div>
 
       <Menu as="div" className="relative flex-shrink-0">
         {({ open }) => (

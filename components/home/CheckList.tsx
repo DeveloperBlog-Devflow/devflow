@@ -1,9 +1,8 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { Todo } from '@/services/home/todoService.service';
 import { CheckItem } from './CheckItem';
-import { HiPlus } from 'react-icons/hi';
 
 type CheckListProps = {
   items: Todo[];
@@ -26,10 +25,6 @@ export default function CheckList({
 }: CheckListProps) {
   const [draft, setDraft] = useState('');
 
-  useEffect(() => {
-    if (showAdd) setDraft('');
-  }, [showAdd]);
-
   const handleSubmit = () => {
     if (showAdd) setDraft('');
     const text = draft.trim();
@@ -42,6 +37,7 @@ export default function CheckList({
       {showAdd && (
         <div className="flex gap-2">
           <input
+            key="add-todo-input"
             autoFocus
             placeholder="할 일을 입력하세요"
             value={draft}
@@ -53,12 +49,13 @@ export default function CheckList({
               if (e.key === 'Enter') handleSubmit();
             }}
           />
-          <div
+          <button
+            type="button"
             className="text-primary flex w-10 items-center text-sm font-bold"
             onClick={handleSubmit}
           >
             추가
-          </div>
+          </button>
         </div>
       )}
       {items.map((item) => (
