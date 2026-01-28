@@ -12,7 +12,7 @@ import {
   writeBatch,
 } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
-import { bumpDailyStat } from '@/services/heatmap/dailyStat.service';
+import { recomputeDailyStat } from '@/services/heatmap/dailyStat.service';
 
 // 플랜 데이터 타입
 export interface Plan {
@@ -30,6 +30,11 @@ export interface PlanItem {
   isChecked: boolean;
   deadline: Date;
   createdAt: Date;
+  dateKey?: string;
+}
+function dateKeyKST(date = new Date()) {
+  const kst = new Date(date.getTime() + 9 * 60 * 60 * 1000);
+  return kst.toISOString().slice(0, 10);
 }
 
 // 1. 플랜 생성하기
@@ -99,6 +104,7 @@ export const addPlanItem = async (
     isChecked: false,
     deadline: deadline ? Timestamp.fromDate(deadline) : null,
     createdAt: Timestamp.now(),
+    dateKey: deadline ? dateKeyKST(deadline) : null,
   });
 };
 
@@ -112,8 +118,7 @@ export const toggleItemStatus = async (
   await updateDoc(itemRef, {
     isChecked: !currentStatus,
   });
-  const delta = !currentStatus ? 1 : -1;
-  await bumpDailyStat(uid, 0, delta);
+  await recomputeDailyStat(uid);
 };
 
 // 6. 플랜 삭제
@@ -153,6 +158,7 @@ export const updatePlanItem = async (
     text?: string; // 수정할 제목
     description?: string; // 수정할 설명
     deadline?: Date | null; // 수정할 마감일 (null이면 마감일 삭제)
+    dateKey?: string;
   }
 ) => {
   const itemRef = doc(db, 'users', uid, 'planItems', itemId);
@@ -162,6 +168,7 @@ export const updatePlanItem = async (
     text?: string;
     description?: string;
     deadline?: Timestamp | null;
+    dateKey?: string | null;
   } = {};
 
   // 1. 제목이 전달되었으면 업데이트 목록에 추가
@@ -179,6 +186,9 @@ export const updatePlanItem = async (
     updatePayload.deadline = updates.deadline
       ? Timestamp.fromDate(updates.deadline)
       : null; // null을 넘기면 DB에서 마감일이 사라짐
+    updatePayload.dateKey = updates.deadline
+      ? dateKeyKST(updates.deadline)
+      : null;
   }
 
   // 변경사항이 있을 때만 DB 요청

@@ -12,4 +12,5 @@ export type TilDoc = {
   content: string;
   createdAt: Timestamp;
   updatedAt: Timestamp;
+  dateKey: string;
 };
