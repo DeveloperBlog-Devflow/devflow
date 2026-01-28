@@ -9,6 +9,8 @@ import {
   orderBy,
   getDoc,
   Timestamp,
+  limit,
+  updateDoc,
 } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 
@@ -24,12 +26,6 @@ function dateKeyKST(date = new Date()) {
   const kst = new Date(date.getTime() + 9 * 60 * 60 * 1000);
   return kst.toISOString().slice(0, 10);
 }
-
-const formatDate = (d: string | Date | undefined) => {
-  if (!d) return '';
-  if (typeof d === 'string') return d;
-  return d.toISOString().split('T')[0]; // YYYY-MM-DD 형식
-};
 
 export const recomputeDailyStat = async (uid: string) => {
   const dateKey = dateKeyKST();
@@ -53,6 +49,10 @@ export const recomputeDailyStat = async (uid: string) => {
 
   /** 3. DailyStat 덮어쓰기 */
   const ref = doc(db, 'users', uid, 'dailyStats', dateKey);
+
+  /** 4. 연속 잔디 심기 일 수 계산 */
+  const streakDays = await fetchStreakDays(uid);
+  await updateDoc(doc(db, 'users', uid), { streakDays });
 
   await setDoc(
     ref,
@@ -109,3 +109,44 @@ export const fetchDailyStatByDate = async (
     total: data.total ?? 0,
   };
 };
+
+function prevDateKey(key: string) {
+  const [y, m, d] = key.split('-').map(Number);
+  // UTC로 만들고 하루 빼서 다시 YYYY-MM-DD
+  const utc = new Date(Date.UTC(y, m - 1, d));
+  utc.setUTCDate(utc.getUTCDate() - 1);
+  return utc.toISOString().slice(0, 10);
+}
+
+async function fetchStreakDays(uid: string): Promise<number> {
+  const todayKey = dateKeyKST();
+
+  // 최근 400일 정도만 읽어도 충분 (1년 스트릭 기준)
+  const statsRef = collection(db, 'users', uid, 'dailyStats');
+  const q = query(
+    statsRef,
+    where('date', '<=', todayKey),
+    orderBy('date', 'desc'),
+    limit(400)
+  );
+
+  const snap = await getDocs(q);
+
+  // 빠른 조회용 map
+  const map = new Map<string, number>();
+  snap.docs.forEach((d) => {
+    const data = d.data() as DailyStat;
+    map.set(data.date, data.total ?? 0);
+  });
+
+  const todayTotal = map.get(todayKey) ?? 0;
+  let cursor = todayTotal > 0 ? todayKey : prevDateKey(todayKey);
+
+  let streak = 0;
+  while ((map.get(cursor) ?? 0) > 0) {
+    streak += 1;
+    cursor = prevDateKey(cursor);
+  }
+
+  return streak;
+}
