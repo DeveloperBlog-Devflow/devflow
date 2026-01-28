@@ -50,10 +50,6 @@ export const recomputeDailyStat = async (uid: string) => {
   /** 3. DailyStat 덮어쓰기 */
   const ref = doc(db, 'users', uid, 'dailyStats', dateKey);
 
-  /** 4. 연속 잔디 심기 일 수 계산 */
-  const streakDays = await fetchStreakDays(uid);
-  await updateDoc(doc(db, 'users', uid), { streakDays });
-
   await setDoc(
     ref,
     {
@@ -65,6 +61,10 @@ export const recomputeDailyStat = async (uid: string) => {
     },
     { merge: true }
   );
+
+  /** 4. 연속 잔디 심기 일 수 계산 */
+  const streakDays = await fetchStreakDays(uid);
+  await updateDoc(doc(db, 'users', uid), { streakDays });
 };
 
 export const fetchDailyStats = async (uid: string): Promise<DailyStat[]> => {
