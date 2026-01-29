@@ -13,6 +13,7 @@ const ToastProvider = ({ children }: { children: React.ReactNode }) => {
         autoClose={3000}
         closeOnClick
         hideProgressBar={false}
+        pauseOnHover={false}
         theme="colored"
       />
     </>

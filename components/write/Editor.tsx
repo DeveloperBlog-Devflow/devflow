@@ -8,6 +8,8 @@ import { createTil, updateTil, fetchMyTil } from '@/services/write/til.service';
 import { auth } from '@/lib/firebase';
 import { useRouter } from 'next/navigation';
 
+import { toast } from 'react-toastify';
+
 const MDEditor = dynamic<MDEditorProps>(() => import('@uiw/react-md-editor'), {
   ssr: false,
 });
@@ -27,19 +29,14 @@ const Editor = ({ tilId }: Props) => {
   useEffect(() => {
     if (!isEdit) return;
 
-    const user = auth.currentUser;
-    if (!user) {
-      alert('로그인이 필요합니다');
-      router.push('/login');
-      return;
-    }
+    const user = auth.currentUser!;
 
     (async () => {
       try {
         setLoading(true);
         const til = await fetchMyTil(user.uid, tilId);
         if (!til) {
-          alert('글을 찾을 수 없습니다');
+          toast.error('글을 찾을 수 없습니다.');
           router.back();
           return;
         }
@@ -48,7 +45,7 @@ const Editor = ({ tilId }: Props) => {
         setValue(til.content);
       } catch (e) {
         console.error(e);
-        alert('글을 불러오지 못했습니다');
+        toast.error('글을 불러오지 못했습니다.');
       } finally {
         setLoading(false);
       }
@@ -60,35 +57,31 @@ const Editor = ({ tilId }: Props) => {
   };
 
   const onClickSave = async () => {
-    const user = auth.currentUser;
-    if (!user) {
-      alert('로그인이 필요합니다');
-      return;
-    }
+    const user = auth.currentUser!;
     if (!title.trim()) {
-      alert('제목을 입력하세요');
+      toast.info('제목을 입력하세요');
       return;
     }
     if (!value.trim()) {
-      alert('내용을 입력하세요');
+      toast.info('내용을 입력하세요');
       return;
     }
 
     try {
       if (isEdit && tilId) {
         await updateTil(user.uid, tilId, title, value);
-        alert('수정 완료!');
+        toast.success('수정이 완료되었습니다.');
         router.push(`/write/${tilId}`); // 상세 페이지로
         return;
       }
       const id = await createTil(user.uid, value, title);
-      alert('저장 완료!');
-      console.log('postId:', id);
+      toast.success('저장이 완료되었습니다.');
+      // console.log('postId:', id);
 
       router.push(`/write/${id}`);
     } catch (e) {
       console.error(e);
-      alert('저장 실패');
+      toast.error('저장에 실패했습니다.');
     }
   };
 
