@@ -20,6 +20,7 @@ import {
   PlanItem,
   addPlanItem,
   deletePlanItem,
+  updatePlanItem,
 } from '@/services/plans/planManageService.service';
 
 interface PlanSectionProps {
@@ -167,7 +168,7 @@ export default function PlanSection({
     onChangeStats();
   };
 
-  // 6. 플랜 수정 핸들러
+  // 6. 플랜 수정 시작 핸들러
   const handleStartEdit = (e: React.MouseEvent) => {
     e.stopPropagation(); // 아코디언 토글 방지
 
@@ -193,6 +194,27 @@ export default function PlanSection({
     e.stopPropagation();
 
     setIsEditingPlan(false); // 수정 모드 종료
+  };
+
+  // 8. 하위 항목 수정 핸들러
+  const handleUpdatePlanItem = async (
+    itemId: string,
+    newText: string,
+    newDeadline?: Date | null
+  ) => {
+    try {
+      // 1. 서비스 함수 호출 (작성해두신 메서드 사용)
+      await updatePlanItem(userId, itemId, {
+        text: newText,
+        deadline: newDeadline, // Date 객체 또는 null(날짜 삭제 시)
+      });
+
+      // 2. 목록 새로고침 & 통계 갱신
+      const updatedTasks = await fetchPlanItems(userId, planId);
+      setTasks(updatedTasks);
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   // 완료된 할 일 개수 계산
@@ -321,6 +343,7 @@ export default function PlanSection({
                   isCompleted={task.isChecked}
                   onToggle={handleToggleTask}
                   onDelete={handleDeletePlanItem}
+                  onUpdate={handleUpdatePlanItem}
                 />
               ))
             )}
