@@ -244,9 +244,7 @@ export const fetchTodayPlanItems = async (uid: string): Promise<PlanItem[]> => {
 
   // KST 기준 오늘 00:00 ~ 내일 00:00
   const now = new Date();
-  const kst = new Date(now.getTime() + 9 * 60 * 60 * 1000);
-  const startKST = new Date(kst.getFullYear(), kst.getMonth(), kst.getDate());
-  const start = new Date(startKST.getTime() - 9 * 60 * 60 * 1000);
+  const start = new Date(now.getFullYear(), now.getMonth(), now.getDate()); // 오늘 00:00 (로컬)
   const end = new Date(start.getTime() + 24 * 60 * 60 * 1000);
 
   const q = query(
