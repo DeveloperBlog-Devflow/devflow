@@ -5,6 +5,7 @@ import Button from './Button';
 import FormField from './FormField';
 import { auth } from '@/lib/firebase';
 import { sendPasswordResetEmail } from 'firebase/auth';
+import { toast } from 'react-toastify';
 
 type FindPasswordModalProps = {
   onClose: () => void;
@@ -25,17 +26,18 @@ const FindPasswordModal = ({ onClose }: FindPasswordModalProps) => {
     e.preventDefault();
 
     if (!email) {
-      alert('이메일을 입력해주세요.');
+      toast.info('이메일을 입력해주세요');
       return;
     }
 
     // 이메일 요청 로직
     sendPasswordResetEmail(auth, email)
       .then(() => {
-        alert('이메일이 발송되었습니다.');
+        toast.success('이메일이 발송되었습니다.');
       })
       .catch((error) => {
-        alert('에러 발생: ' + error.message);
+        console.log('에러 발생: ' + error.message);
+        toast.error('오류가 발생했습니다.');
       });
   };
 

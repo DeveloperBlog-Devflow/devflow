@@ -11,6 +11,8 @@ import {
 } from 'lucide-react';
 import { signOut } from 'firebase/auth';
 import { auth } from '@/lib/firebase';
+import { toast } from 'react-toastify';
+import { toastConfirm } from '@/utils/toastUtils';
 
 const navItems = [
   { label: '홈', href: '/', icon: Home },
@@ -24,15 +26,22 @@ const Sidebar = () => {
   const router = useRouter();
 
   const handleLogout = async (): Promise<void> => {
+    const ok = await toastConfirm('로그아웃 하시겠습니까?', {
+      confirmText: '로그아웃',
+      cancelText: '취소',
+    });
+
+    if (!ok) return;
+
     try {
       await signOut(auth);
       document.cookie =
         'isLoggedIn=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';
-      alert('로그아웃 되었습니다.');
+      toast.success('로그아웃 되었습니다.');
       router.replace('/landing');
     } catch (err) {
-      console.error('로그아웃 실패:', err);
-      alert('로그아웃에 실패했습니다.');
+      console.log(err);
+      toast.error('로그아웃에 실패했습니다.');
     }
   };
 
