@@ -12,6 +12,7 @@ import {
 import { signOut } from 'firebase/auth';
 import { auth } from '@/lib/firebase';
 import { toast } from 'react-toastify';
+import { toastConfirm } from '@/utils/toastUtils';
 
 const navItems = [
   { label: '홈', href: '/', icon: Home },
@@ -25,6 +26,13 @@ const Sidebar = () => {
   const router = useRouter();
 
   const handleLogout = async (): Promise<void> => {
+    const ok = await toastConfirm('로그아웃 하시겠습니까?', {
+      confirmText: '로그아웃',
+      cancelText: '취소',
+    });
+
+    if (!ok) return;
+
     try {
       await signOut(auth);
       document.cookie =
