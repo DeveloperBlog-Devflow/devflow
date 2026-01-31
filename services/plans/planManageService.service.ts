@@ -293,9 +293,18 @@ export const fetchUpcomingPlanItems = async (
   });
 
   //정렬
-  items.sort(
-    (a, b) => +a.deadline - +b.deadline || +a.createdAt - +b.createdAt
-  );
+  items.sort((a, b) => {
+    const deadlineA = a.deadline ? a.deadline.getTime() : Infinity;
+    const deadlineB = b.deadline ? b.deadline.getTime() : Infinity;
+
+    // deadline이 다르면 deadline으로 정렬
+    if (deadlineA !== deadlineB) {
+      return deadlineA - deadlineB;
+    }
+
+    // deadline이 같거나 둘 다 없으면 createdAt으로 정렬
+    return +a.createdAt - +b.createdAt;
+  });
 
   return items;
 };
