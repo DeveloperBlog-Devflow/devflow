@@ -22,6 +22,7 @@ import {
   deletePlanItem,
   updatePlanItem,
 } from '@/services/plans/planManageService.service';
+import { toastConfirm } from '@/utils/toastUtils';
 
 interface PlanSectionProps {
   userId: string;
@@ -153,16 +154,24 @@ export default function PlanSection({
 
   // 5. 하위 항목 삭제 핸들러
   const handleDeletePlanItem = async (itemId: string, title: string) => {
-    if (confirm(`'${title}' 하위 항목을 정말 삭제하시겠습니까?`)) {
-      try {
-        await deletePlanItem(userId, itemId);
-
-        // 목록 새로고침
-        const fetchedPlanItems = await fetchPlanItems(userId, planId);
-        setTasks(fetchedPlanItems);
-      } catch (err) {
-        console.error(err);
+    const ok = await toastConfirm(
+      `${title} 하위 항목을 정말 삭제하시겠습니까?`,
+      {
+        confirmText: '삭제',
+        cancelText: '취소',
       }
+    );
+
+    if (!ok) return;
+
+    try {
+      await deletePlanItem(userId, itemId);
+
+      // 목록 새로고침
+      const fetchedPlanItems = await fetchPlanItems(userId, planId);
+      setTasks(fetchedPlanItems);
+    } catch (err) {
+      console.error(err);
     }
 
     onChangeStats();

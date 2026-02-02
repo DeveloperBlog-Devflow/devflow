@@ -14,7 +14,7 @@ const InlineAddPlanForm = ({ onSave, onCancel }: InlineAddPlanFormProps) => {
 
   const handleSave = () => {
     if (!title.trim()) {
-      toast.info('플랜 제목을 입력해주세요.');
+      toast.error('플랜 제목을 입력해주세요.');
       return;
     }
     onSave(title, description);

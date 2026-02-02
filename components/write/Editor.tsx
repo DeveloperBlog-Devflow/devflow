@@ -70,11 +70,11 @@ const Editor = ({ tilId }: Props) => {
     }
 
     if (!title.trim()) {
-      toast.info('제목을 입력하세요');
+      toast.error('제목을 입력하세요');
       return;
     }
     if (!value.trim()) {
-      toast.info('내용을 입력하세요');
+      toast.error('내용을 입력하세요');
       return;
     }
 
