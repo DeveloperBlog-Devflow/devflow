@@ -5,6 +5,8 @@ import type { TilItem } from '@/types/til';
 import { useRouter } from 'next/navigation';
 import { Menu } from '@headlessui/react';
 import { useAuthUser } from '@/hooks/useAuthUser';
+import { toast } from 'react-toastify';
+import { toastConfirm } from '@/utils/toastUtils';
 
 type Props = {
   item: TilItem;
@@ -24,9 +26,15 @@ const TilCard = ({ item, onDelete }: Props) => {
     router.push(`/edit/${item.id}`);
   };
   const onClickDelete = async () => {
-    if (!confirm('정말 삭제할까요?')) return;
+    const ok = await toastConfirm('정말 삭제하시겠습니까?', {
+      confirmText: '삭제',
+      cancelText: '취소',
+    });
+
+    if (!ok) return;
+
     await onDelete?.(item.id);
-    alert('성공적으로 삭제되었습니다.');
+    toast.success('성공적으로 삭제되었습니다.');
   };
   return (
     <article className="relative rounded-3xl border border-black/10 bg-white px-10 py-8">

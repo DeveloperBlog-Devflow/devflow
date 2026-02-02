@@ -5,6 +5,7 @@ import FormField from '@/components/auth/FormField';
 import { SignupValues, useSignupForm } from './useSignupForm';
 import { useRouter } from 'next/navigation';
 import { signupWithEmail } from '@/services/auth/signup.service';
+import { toast } from 'react-toastify';
 
 const toPayload = (v: SignupValues) => ({
   nickname: v.nickname,
@@ -24,7 +25,7 @@ const SignupForm = () => {
 
     try {
       await signupWithEmail(toPayload(values));
-      alert('회원가입 완료되었습니다.');
+      toast.success('회원가입 완료되었습니다.');
       router.push('/login');
     } catch (e: unknown) {
       const code =
@@ -36,8 +37,8 @@ const SignupForm = () => {
           : '';
 
       if (code === 'auth/email-already-in-use')
-        alert('이미 가입된 이메일입니다');
-      else alert('회원가입에 실패했습니다');
+        toast.info('이미 가입된 이메일입니다.');
+      else toast.error('회원가입에 실패했습니다');
     }
   };
 

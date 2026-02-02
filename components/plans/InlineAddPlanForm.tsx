@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { toast } from 'react-toastify';
 
 interface InlineAddPlanFormProps {
   onSave: (title: string, description: string) => void;
@@ -13,7 +14,7 @@ const InlineAddPlanForm = ({ onSave, onCancel }: InlineAddPlanFormProps) => {
 
   const handleSave = () => {
     if (!title.trim()) {
-      alert('플랜 제목을 입력해주세요.');
+      toast.error('플랜 제목을 입력해주세요.');
       return;
     }
     onSave(title, description);
