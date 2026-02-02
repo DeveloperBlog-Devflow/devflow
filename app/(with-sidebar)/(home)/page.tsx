@@ -60,7 +60,7 @@ const Page = () => {
 
   // 유저 정보가 있을 시
   return (
-    <div className="bg-background flex min-h-screen flex-col gap-4 font-sans md:p-[137px]">
+    <div className="bg-background mx-auto flex min-h-screen max-w-7xl flex-col gap-4 font-sans md:p-[137px]">
       {/* 1. Header */}
       <HeaderSection />
 
