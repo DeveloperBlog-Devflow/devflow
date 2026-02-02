@@ -29,7 +29,12 @@ const Editor = ({ tilId }: Props) => {
   useEffect(() => {
     if (!isEdit) return;
 
-    const user = auth.currentUser!;
+    const user = auth.currentUser;
+    if (!user) {
+      toast.error('로그인이 필요합니다.');
+      router.push('/login');
+      return;
+    }
 
     (async () => {
       try {
@@ -57,7 +62,13 @@ const Editor = ({ tilId }: Props) => {
   };
 
   const onClickSave = async () => {
-    const user = auth.currentUser!;
+    const user = auth.currentUser;
+    if (!user) {
+      toast.error('로그인이 필요합니다.');
+      router.push('/login');
+      return;
+    }
+
     if (!title.trim()) {
       toast.info('제목을 입력하세요');
       return;
